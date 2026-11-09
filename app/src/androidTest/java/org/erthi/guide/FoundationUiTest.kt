@@ -20,7 +20,7 @@ class FoundationUiTest {
         waitReady()
         val prefs=rule.activity.getSharedPreferences("appearance",0)
         rule.onNodeWithContentDescription(rule.activity.getString(R.string.settings)).performClick()
-        rule.onNodeWithText(rule.activity.getString(R.string.high_contrast)).performScrollTo().assertIsDisplayed()
+        rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(rule.activity.getString(R.string.high_contrast)))
         val before=prefs.getBoolean("contrast",false)
         rule.onNode(isToggleable()).performClick()
         rule.waitForIdle()
@@ -34,7 +34,9 @@ class FoundationUiTest {
             rule.waitForIdle()
             val direction=rule.activity.resources.configuration.layoutDirection
             assertEquals(if(code in listOf("ar","ur")) 1 else 0,direction)
-            rule.onNodeWithText(rule.activity.getString(R.string.settings)).assertExists()
+            val title = rule.activity.getString(R.string.settings)
+            rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(title))
+            rule.onNodeWithText(title).assertIsDisplayed()
             val bitmap=InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
             val dir=java.io.File(rule.activity.getExternalFilesDir(null),"screenshots").apply { mkdirs() }
             java.io.File(dir,"settings-$code.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it) }
