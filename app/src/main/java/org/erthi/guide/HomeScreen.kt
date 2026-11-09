@@ -35,12 +35,19 @@ class GuideModel(app: Application): AndroidViewModel(app) {
         private set
     fun favorite(id:String) {
         if(modules.none { it.id==id }) return
-        favorites=if(id in favorites) favorites-id else favorites+id
-        prefs.edit().putStringSet("favorites",favorites.toSet()).apply()
+        val updated = if (id in favorites) favorites - id else favorites + id
+        // Publish the selection only after it can survive a process stop.
+        if (prefs.edit().putStringSet("favorites", updated).commit()) {
+            favorites = updated
+        }
     }
     fun goal(id:String) {
         if(modules.none { it.id==id }) return
-        goals=goals+id;prefs.edit().putStringSet("goals",goals.toSet()).apply()
+        if (id in goals) return
+        val updated = goals + id
+        if (prefs.edit().putStringSet("goals", updated).commit()) {
+            goals = updated
+        }
     }
 }
 
