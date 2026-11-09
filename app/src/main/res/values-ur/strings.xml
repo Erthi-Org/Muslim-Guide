@@ -71,4 +71,7 @@
  <string name="goal_finished">میں نے یہ ہدف مکمل کیا</string>
  <string name="more">مزید</string>
  <string name="quran_supplications">قرآن سے دعائیں</string>
+ <string name="quran_reading">پڑھنے کے لیے آیات</string>
+ <string name="favorites_hint">یہاں دیکھنے کے لیے کسی حصے کو پسندیدہ میں شامل کریں۔</string>
+ <string name="goals_hint">کسی حصے میں سیکھنے کا ہدف مقرر کریں تاکہ یہاں پیش رفت دیکھ سکیں۔</string>
 </resources>

@@ -71,4 +71,7 @@
  <string name="goal_finished">Saya telah menyelesaikan tujuan ini</string>
  <string name="more">Lainnya</string>
  <string name="quran_supplications">Doa dari Al-Qur’an</string>
+ <string name="quran_reading">Ayat untuk dibaca</string>
+ <string name="favorites_hint">Simpan bagian agar muncul di sini.</string>
+ <string name="goals_hint">Buka bagian dan tetapkan tujuan belajar untuk melacaknya di sini.</string>
 </resources>

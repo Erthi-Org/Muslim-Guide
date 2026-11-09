@@ -71,4 +71,7 @@
  <string name="goal_finished">Bu hedefi tamamladım</string>
  <string name="more">Daha fazla</string>
  <string name="quran_supplications">Kur’an’dan dualar</string>
+ <string name="quran_reading">Okunacak ayetler</string>
+ <string name="favorites_hint">Burada görmek için bir bölümü kaydedin.</string>
+ <string name="goals_hint">Bir bölüm açıp burada izlemek için öğrenme hedefi belirleyin.</string>
 </resources>

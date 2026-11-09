@@ -71,4 +71,7 @@
  <string name="goal_finished">Ich habe dieses Ziel erreicht</string>
  <string name="more">Mehr</string>
  <string name="quran_supplications">Bittgebete aus dem Koran</string>
+ <string name="quran_reading">Verse zum Lesen</string>
+ <string name="favorites_hint">Speichere einen Bereich, um ihn hier zu sehen.</string>
+ <string name="goals_hint">Setze in einem Bereich ein Lernziel.</string>
 </resources>

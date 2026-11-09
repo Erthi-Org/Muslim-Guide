@@ -71,4 +71,7 @@
  <string name="goal_finished">أنجزت هذا الهدف</string>
  <string name="more">المزيد</string>
  <string name="quran_supplications">أدعية من القرآن</string>
+ <string name="quran_reading">آيات للقراءة</string>
+ <string name="favorites_hint">أضف قسمًا إلى المفضلة ليظهر هنا.</string>
+ <string name="goals_hint">افتح قسمًا وحدد هدف تعلّم لتتابع إنجازه هنا.</string>
 </resources>

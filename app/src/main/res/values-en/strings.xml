@@ -71,4 +71,7 @@
  <string name="goal_finished">I completed this goal</string>
  <string name="more">More</string>
  <string name="quran_supplications">Supplications from the Quran</string>
+ <string name="quran_reading">Verses to read</string>
+ <string name="favorites_hint">Save a section to see it here.</string>
+ <string name="goals_hint">Open a section and set a learning goal to track it here.</string>
 </resources>
