@@ -117,7 +117,7 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
     var query by rememberSaveable { mutableStateOf("") }
     val bitmap = ImageBitmap.imageResource(R.drawable.guide_reference)
     val detail = modules.firstOrNull { it.id == selected }
-    val searchable = modules.map { it to stringResource(it.title) }
+    val visible = modules.filter { matchesModuleQuery(stringResource(it.title), query) }
     androidx.activity.compose.BackHandler(selected != null || section != "home") {
         if (selected != null) selected = null else section = "home"
     }
@@ -127,7 +127,7 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (detail != null) {
                     item(key = "detail") {
@@ -148,34 +148,14 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                     }
                 } else if (section == "home") {
                     item(key = "hero") { GuideHero(bitmap, onSettings) }
-                    val visible = searchable.filter { matchesModuleQuery(it.second, query) }.map { it.first }
                     if (query.isBlank()) {
                         moduleRows(visible.take(3), if (compact) 2 else 3, bitmap, true) { selected = it.id }
                         moduleRows(visible.drop(3), if (compact) 2 else 4, bitmap, false) { selected = it.id }
                     } else {
                         moduleRows(visible, if (compact) 2 else 3, bitmap, false) { selected = it.id }
                     }
-                    item(key = "search") {
-                        OutlinedTextField(
-                            value = query, onValueChange = { query = it },
-                            modifier = Modifier.fillMaxWidth(), singleLine = true,
-                            label = { Text(stringResource(R.string.search)) },
-                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                            trailingIcon = if (query.isEmpty()) null else ({
-                                IconButton(onClick = { query = "" }) {
-                                    Icon(Icons.Default.Close, stringResource(R.string.clear_search))
-                                }
-                            }),
-                            shape = RoundedCornerShape(28.dp),
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = Color.White, unfocusedTextColor = Color.White,
-                                focusedLabelColor = gold, unfocusedLabelColor = Color(0xFFD7E6FB),
-                                focusedLeadingIconColor = gold, unfocusedLeadingIconColor = gold,
-                                focusedTrailingIconColor = gold, unfocusedTrailingIconColor = gold,
-                                focusedBorderColor = gold, unfocusedBorderColor = Color(0xFF526C9B)
-                            )
-                        )
-                        if (visible.isEmpty()) Text(stringResource(R.string.no_search_results), color = Color.White)
+                    if (visible.isEmpty()) item {
+                        Text(stringResource(R.string.no_search_results), color = Color.White)
                     }
                 } else {
                     val title = when (section) {
@@ -211,6 +191,27 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                     }
                 }
             }
+        }
+        if (section == "home" && detail == null) {
+            OutlinedTextField(
+                value = query, onValueChange = { query = it },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp), singleLine = true,
+                label = { Text(stringResource(R.string.search)) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = if (query.isEmpty()) null else ({
+                    IconButton(onClick = { query = "" }) {
+                        Icon(Icons.Default.Close, stringResource(R.string.clear_search))
+                    }
+                }),
+                shape = RoundedCornerShape(28.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White, unfocusedTextColor = Color.White,
+                    focusedLabelColor = gold, unfocusedLabelColor = Color(0xFFD7E6FB),
+                    focusedLeadingIconColor = gold, unfocusedLeadingIconColor = gold,
+                    focusedTrailingIconColor = gold, unfocusedTrailingIconColor = gold,
+                    focusedBorderColor = gold, unfocusedBorderColor = Color(0xFF526C9B)
+                )
+            )
         }
         GuideNavigation(section, onSettings) { section = it; selected = null }
     }
@@ -271,8 +272,8 @@ private fun IllustratedModule(
             .border(1.dp, color.copy(alpha = .86f), shape).then(interactive),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ReferenceArt(bitmap, art, Modifier.fillMaxWidth().height(if (featured) 104.dp else 60.dp))
-        Box(Modifier.fillMaxWidth().heightIn(min = if (featured) 48.dp else 42.dp).padding(4.dp),
+        ReferenceArt(bitmap, art, Modifier.fillMaxWidth().height(if (featured) 88.dp else 48.dp))
+        Box(Modifier.fillMaxWidth().heightIn(min = if (featured) 44.dp else 36.dp).padding(4.dp),
             contentAlignment = Alignment.Center) {
             Text(stringResource(module.title), color = Color.White, fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center, style = if (featured) MaterialTheme.typography.titleSmall else MaterialTheme.typography.labelMedium)

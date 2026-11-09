@@ -23,9 +23,7 @@ class GuideNavigationTest {
             android.os.ParcelFileDescriptor.AutoCloseInputStream(capture).use { it.readBytes() }
         }.onFailure { android.util.Log.w("ErthiUiTest", "Home screenshot capture failed", it) }
         val title = rule.activity.getString(R.string.child)
-        val search = rule.activity.getString(R.string.search)
-        scrollTo(search)
-        rule.onNode(hasSetTextAction()).performTextInput(title)
+        rule.onNode(hasSetTextAction()).assertIsDisplayed().performTextInput(title)
         val moduleButton = hasText(title) and hasClickAction() and !hasSetTextAction()
         rule.onNode(hasScrollToIndexAction()).performScrollToNode(moduleButton)
         rule.onNode(moduleButton).performClick()
@@ -54,7 +52,6 @@ class GuideNavigationTest {
         val back = rule.activity.getString(R.string.back)
         scrollTo(back)
         rule.onNodeWithText(back).performClick()
-        scrollTo(search)
         rule.onNode(hasSetTextAction()).performTextReplacement("zz-nonexistent")
         val favorites = rule.activity.getString(R.string.favorites)
         rule.onNodeWithText(favorites).performClick()
