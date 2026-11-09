@@ -82,7 +82,8 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             adb shell mkdir -p /data/local/tmp/erthi-screenshots
-            gradle :app:connectedDebugAndroidTest --no-daemon --stacktrace
+            gradle :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.notClass=org.erthi.guide.ProcessRestartTest --no-daemon --stacktrace
+            bash tools/check_process_restart.sh
             adb pull /data/local/tmp/erthi-screenshots screenshots || echo "::warning::Optional emulator screenshots could not be collected"
       - name: Check optional screenshot evidence
         if: always()
@@ -97,4 +98,5 @@ jobs:
           path: |
             app/build/outputs/androidTest-results/
             screenshots/
+            app/build/restart-report.txt
           if-no-files-found: ignore
