@@ -20,6 +20,7 @@ class ProcessRestartTest {
                     GuideModel(app).apply {
                         favorite("prayer")
                         goal("fasting")
+                        toggleFinished("fasting")
                     }
                 }
             }
@@ -27,6 +28,7 @@ class ProcessRestartTest {
                 val model = GuideModel(app)
                 assertEquals(setOf("prayer"), model.favorites)
                 assertEquals(setOf("fasting"), model.goals)
+                assertEquals(setOf("fasting"), model.finished)
             }
             else -> error("Missing restart phase")
         }

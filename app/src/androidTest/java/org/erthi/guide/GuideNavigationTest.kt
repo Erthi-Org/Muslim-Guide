@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,6 +16,12 @@ class GuideNavigationTest {
     }
 
     @Test fun searchDoesNotHideFavoritesAfterReturningFromDetail() {
+        rule.onNodeWithText(rule.activity.getString(R.string.app_name)).assertIsDisplayed()
+        runCatching {
+            val capture = InstrumentationRegistry.getInstrumentation().uiAutomation
+                .executeShellCommand("screencap -p /data/local/tmp/erthi-screenshots/guide-home.png")
+            android.os.ParcelFileDescriptor.AutoCloseInputStream(capture).use { it.readBytes() }
+        }.onFailure { android.util.Log.w("ErthiUiTest", "Home screenshot capture failed", it) }
         val title = rule.activity.getString(R.string.child)
         val search = rule.activity.getString(R.string.search)
         scrollTo(search)
