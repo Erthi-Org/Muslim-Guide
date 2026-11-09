@@ -1,0 +1,2 @@
+# Contributing
+Use a focused branch and pull request. Run `./gradlew testDebugUnitTest lintDebug assembleDebug` and `python3 tools/verify_foundation.py`. Preserve licenses and source attribution. Religious content needs exact source/version, permission, integrity evidence and independent human scholarly review. UI translations require native-speaker review; never treat automatic translations as reviewed religious material. Test Arabic/Urdu RTL, other locales LTR, 200% fonts and TalkBack. Never commit personal ownership documents, credentials, signing keys or real user data.
