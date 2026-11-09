@@ -74,4 +74,6 @@
  <string name="quran_reading">Okunacak ayetler</string>
  <string name="favorites_hint">Burada görmek için bir bölümü kaydedin.</string>
  <string name="goals_hint">Bir bölüm açıp burada izlemek için öğrenme hedefi belirleyin.</string>
+ <string name="activity_finished">Bu etkinliği tamamladım</string>
+ <string name="activity_progress">Tamamlanan etkinlikler: %2$d etkinlikten %1$d</string>
 </resources>

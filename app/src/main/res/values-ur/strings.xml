@@ -74,4 +74,6 @@
  <string name="quran_reading">پڑھنے کے لیے آیات</string>
  <string name="favorites_hint">یہاں دیکھنے کے لیے کسی حصے کو پسندیدہ میں شامل کریں۔</string>
  <string name="goals_hint">کسی حصے میں سیکھنے کا ہدف مقرر کریں تاکہ یہاں پیش رفت دیکھ سکیں۔</string>
+ <string name="activity_finished">میں نے یہ سرگرمی مکمل کی</string>
+ <string name="activity_progress">مکمل سرگرمیاں: %2$d میں سے %1$d</string>
 </resources>

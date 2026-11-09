@@ -74,4 +74,6 @@
  <string name="quran_reading">Versets à lire</string>
  <string name="favorites_hint">Enregistrez une rubrique pour la retrouver ici.</string>
  <string name="goals_hint">Ouvrez une rubrique et fixez un objectif pour le suivre ici.</string>
+ <string name="activity_finished">J’ai terminé cette activité</string>
+ <string name="activity_progress">Activités terminées : %1$d sur %2$d</string>
 </resources>

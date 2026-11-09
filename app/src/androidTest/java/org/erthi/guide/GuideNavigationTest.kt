@@ -79,6 +79,11 @@ class GuideNavigationTest {
         rule.onNodeWithText(title).assertIsDisplayed().performClick()
         rule.onNodeWithText(query, substring = true).assertIsDisplayed()
         rule.onNodeWithText(otherTitle).assertDoesNotExist()
+        val completed = rule.activity.getString(R.string.activity_finished)
+        scrollTo(completed)
+        rule.onNodeWithText(completed).assertIsOff().performClick()
+        rule.onNodeWithText(completed).assertIsOn()
+        scrollTo(rule.activity.getString(R.string.back))
         rule.onNodeWithText(rule.activity.getString(R.string.back)).performClick()
         scrollTo(title)
         rule.onNodeWithText(title).assertIsDisplayed()
@@ -86,6 +91,10 @@ class GuideNavigationTest {
         searchField.performImeAction()
         scrollTo(title)
         rule.onNode(hasText(title) and hasClickAction() and !hasSetTextAction()).assertIsDisplayed()
+        rule.onNodeWithText(rule.activity.getString(R.string.progress)).performClick()
+        val total = rule.activity.getString(R.string.activity_progress, 1, 22)
+        scrollTo(total)
+        rule.onNodeWithText(total).assertIsDisplayed()
     }
 
     @Test fun libraryOpensOfflineQuranSupplications() {

@@ -74,4 +74,6 @@
  <string name="quran_reading">Verse zum Lesen</string>
  <string name="favorites_hint">Speichere einen Bereich, um ihn hier zu sehen.</string>
  <string name="goals_hint">Setze in einem Bereich ein Lernziel.</string>
+ <string name="activity_finished">Ich habe diese Aktivität abgeschlossen</string>
+ <string name="activity_progress">Abgeschlossene Aktivitäten: %1$d von %2$d</string>
 </resources>

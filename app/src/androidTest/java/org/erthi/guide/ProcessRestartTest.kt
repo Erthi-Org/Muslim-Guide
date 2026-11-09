@@ -21,6 +21,7 @@ class ProcessRestartTest {
                         favorite("prayer")
                         goal("fasting")
                         toggleFinished("fasting")
+                        toggleActivity("prayer:0")
                     }
                 }
             }
@@ -29,6 +30,7 @@ class ProcessRestartTest {
                 assertEquals(setOf("prayer"), model.favorites)
                 assertEquals(setOf("fasting"), model.goals)
                 assertEquals(setOf("fasting"), model.finished)
+                assertEquals(setOf("prayer:0"), model.completedActivities)
             }
             else -> error("Missing restart phase")
         }

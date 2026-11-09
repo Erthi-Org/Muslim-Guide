@@ -74,4 +74,6 @@
  <string name="quran_reading">Aleyas para leer</string>
  <string name="favorites_hint">Guarda una sección para verla aquí.</string>
  <string name="goals_hint">Abre una sección y fija un objetivo para seguirlo aquí.</string>
+ <string name="activity_finished">He completado esta actividad</string>
+ <string name="activity_progress">Actividades completadas: %1$d de %2$d</string>
 </resources>

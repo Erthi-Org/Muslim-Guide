@@ -67,6 +67,14 @@ class GuideModel(app: Application): AndroidViewModel(app) {
     var finished by mutableStateOf(prefs.getStringSet("finished", emptySet()).orEmpty().toSet())
         private set
 
+    var completedActivities by mutableStateOf(prefs.getStringSet("completed-activities", emptySet()).orEmpty().toSet())
+        private set
+
+    fun toggleActivity(id: String) {
+        val updated = if (id in completedActivities) completedActivities - id else completedActivities + id
+        if (prefs.edit().putStringSet("completed-activities", updated).commit()) completedActivities = updated
+    }
+
     fun toggleFinished(id: String) {
         if (id !in goals) return
         val updated = if (id in finished) finished - id else finished + id
@@ -139,9 +147,12 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
             module.id to List(entries.length()) { index ->
                 val entry = entries.getJSONArray(index)
                 val offset = if (arabic) 0 else 2
-                LearningActivity(entry.getString(offset), entry.getString(offset + 1))
+                LearningActivity("${module.id}:$index", entry.getString(offset), entry.getString(offset + 1))
             }
         }
+    }
+    val activityCounts = activities.mapValues { (_, lessons) ->
+        lessons.count { it.id in model.completedActivities }
     }
     val visible = modules.filter { matchesModuleQuery(stringResource(it.title), query) }
     val activityMatches = remember(query, activities) {
@@ -184,14 +195,14 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                             val lessons = activities.getValue(detail.id)
                             val focused = selectedActivity?.let(lessons::getOrNull)
                             if (focused != null) {
-                                LearningActivityCard(focused)
+                                LearningActivityCard(focused, model)
                                 TextButton(onClick = { selectedActivity = null }) {
                                     Text(stringResource(detail.title))
                                 }
                                 QuranReading(detail.id)
                                 return@Column
                             }
-                            lessons.forEach { LearningActivityCard(it) }
+                            lessons.forEach { LearningActivityCard(it, model) }
 
                             Button(onClick = { model.goal(detail.id) }, enabled = detail.id !in model.goals) {
                                 Text(stringResource(if (detail.id in model.goals) R.string.target_saved else R.string.goal))
@@ -239,14 +250,14 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                     item(key = "section-title") {
                         Text(stringResource(title), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.headlineSmall,
                             modifier = Modifier.semantics { heading() })
-                        if (section == "progress") Text(
-                            stringResource(R.string.goal_progress, model.finished.size, model.goals.size),
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        if (section == "progress") {
+                            Text(stringResource(R.string.goal_progress, model.finished.size, model.goals.size))
+                            Text(stringResource(R.string.activity_progress, activityCounts.values.sum(), activities.values.sumOf { it.size }))
+                        }
                     }
                     val list = when (section) {
                         "favorites" -> modules.filter { it.id in model.favorites }
-                        "progress" -> modules.filter { it.id in model.goals }
+                        "progress" -> modules.filter { it.id in model.goals || activityCounts.getValue(it.id) > 0 }
                         else -> modules
                     }
                     if (list.isEmpty()) item {
@@ -261,8 +272,11 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                         items(list, key = { it.id }) { module ->
                             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                                 IllustratedModule(module, bitmap, Modifier.fillMaxWidth(), false) { selected = module.id }
-                                if (section == "progress") GoalCompletion(module.id in model.finished) {
-                                    model.toggleFinished(module.id)
+                                if (section == "progress") {
+                                    Text(stringResource(R.string.activity_progress, activityCounts.getValue(module.id), activities.getValue(module.id).size))
+                                    if (module.id in model.goals) GoalCompletion(module.id in model.finished) {
+                                        model.toggleFinished(module.id)
+                                    }
                                 } else FavoriteButton(module, model)
                             }
                         }
@@ -402,15 +416,19 @@ private fun GuideNavigation(section: String, onSettings: () -> Unit, navigate: (
     }
 }
 
-private data class LearningActivity(val title: String, val body: String)
+// Keep the bundled activity order stable because its positions are stored locally.
+private data class LearningActivity(val id: String, val title: String, val body: String)
 private data class ActivityMatch(val module: LearningModule, val index: Int, val activity: LearningActivity)
 
 @Composable
-private fun LearningActivityCard(activity: LearningActivity) {
+private fun LearningActivityCard(activity: LearningActivity, model: GuideModel) {
     Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp)) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(activity.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
             Text(activity.body, style = MaterialTheme.typography.bodyLarge)
+            CompletionCheckbox(R.string.activity_finished, activity.id in model.completedActivities) {
+                model.toggleActivity(activity.id)
+            }
         }
     }
 }
@@ -458,14 +476,18 @@ private fun QuranReading(moduleId: String) {
 }
 
 @Composable
-private fun GoalCompletion(done: Boolean, change: () -> Unit) {
+private fun GoalCompletion(done: Boolean, change: () -> Unit) =
+    CompletionCheckbox(R.string.goal_finished, done, change)
+
+@Composable
+private fun CompletionCheckbox(label: Int, done: Boolean, change: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().heightIn(min = 48.dp)
             .toggleable(value = done, role = Role.Checkbox, onValueChange = { change() }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(checked = done, onCheckedChange = null, modifier = Modifier.padding(end = 8.dp))
-        Text(stringResource(R.string.goal_finished), color = MaterialTheme.colorScheme.onSurface)
+        Text(stringResource(label), color = MaterialTheme.colorScheme.onSurface)
     }
 }
 
