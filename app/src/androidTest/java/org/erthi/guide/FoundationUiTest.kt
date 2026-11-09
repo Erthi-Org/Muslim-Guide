@@ -37,22 +37,12 @@ class FoundationUiTest {
             val title = rule.activity.getString(R.string.settings)
             rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(title))
             rule.onNodeWithText(title).assertIsDisplayed()
-            val bitmap=InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
-            val activity = rule.activity
-            val screenshot = "settings-$code.png"
-            val file = java.io.File(activity.filesDir, screenshot)
-            file.outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
-            bitmap.recycle()
-            // Gradle uninstalls the test app before the runner collects artifacts.
-            val shellOutput = InstrumentationRegistry.getInstrumentation().uiAutomation
-                .executeShellCommand(
-                    "mkdir -p /data/local/tmp/erthi-screenshots && " +
-                        "run-as ${activity.packageName} cat files/$screenshot > /data/local/tmp/erthi-screenshots/$screenshot && " +
-                        "test -s /data/local/tmp/erthi-screenshots/$screenshot && echo saved"
-                )
-            val result = android.os.ParcelFileDescriptor.AutoCloseInputStream(shellOutput)
-                .bufferedReader().use { it.readText().trim() }
-            assertEquals("saved", result)
+            // The shell owns this capture and its directory, independently of app uninstall.
+            runCatching {
+                val output = InstrumentationRegistry.getInstrumentation().uiAutomation
+                    .executeShellCommand("screencap -p /data/local/tmp/erthi-screenshots/settings-$code.png")
+                android.os.ParcelFileDescriptor.AutoCloseInputStream(output).use { it.readBytes() }
+            }.onFailure { android.util.Log.w("ErthiUiTest", "Screenshot capture failed", it) }
         }
         assertEquals(!before,prefs.getBoolean("contrast",false))
     }

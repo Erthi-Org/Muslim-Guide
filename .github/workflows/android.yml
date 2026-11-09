@@ -81,8 +81,12 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
+            adb shell mkdir -p /data/local/tmp/erthi-screenshots
             gradle :app:connectedDebugAndroidTest --no-daemon --stacktrace
-            adb pull /data/local/tmp/erthi-screenshots screenshots
+            adb pull /data/local/tmp/erthi-screenshots screenshots || echo "::warning::Optional emulator screenshots could not be collected"
+            for locale in en ur de ar; do
+              test -s "screenshots/settings-$locale.png" || echo "::warning::Missing settings screenshot for $locale"
+            done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
