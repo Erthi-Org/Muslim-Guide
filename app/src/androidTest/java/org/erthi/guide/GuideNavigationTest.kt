@@ -73,7 +73,8 @@ class GuideNavigationTest {
         val otherTitle = if (arabic) "كلمة طيبة" else "A kind word"
 
         val searchField = rule.onNode(hasSetTextAction())
-        searchField.performTextInput(query).performImeAction()
+        searchField.performTextInput(query)
+        searchField.performImeAction()
         scrollTo(title)
         rule.onNodeWithText(title).assertIsDisplayed().performClick()
         rule.onNodeWithText(query, substring = true).assertIsDisplayed()
