@@ -1,0 +1,156 @@
+{
+  "child": [
+    [
+      "أمانة في المدرسة",
+      "في طريقك إلى الفصل وجدت قلمًا ليس لك. سلّمه للمعلم ليعيده إلى صاحبه، ثم احكِ في البيت ماذا فعلت ولماذا.",
+      "Honesty at school",
+      "You find a pen on your way to class. Give it to your teacher so it can be returned. At home, explain what you did and why."
+    ],
+    [
+      "كلمة طيبة",
+      "اختر شخصًا ساعدك اليوم. قل له شكرًا، واذكر الشيء الذي قدّم لك فيه المساعدة.",
+      "A kind word",
+      "Choose someone who helped you today. Thank them and say what they helped you with."
+    ]
+  ],
+  "prayer": [
+    [
+      "تهيّأ للصلاة",
+      "راجع موعد الصلاة من جدول مسجدك المحلي، وجهّز مكانًا نظيفًا وهادئًا. اطلب ممن تتعلّم منه أن يريك الوضوء والصلاة عمليًا.",
+      "Prepare for prayer",
+      "Check the time on your local mosque timetable and prepare a clean, quiet place. Ask your teacher to demonstrate ablution and prayer."
+    ],
+    [
+      "تدرّب ثم اسأل",
+      "لاحظ الترتيب عند مشاهدة الشرح. أعد الخطوات مع معلّمك واطلب منه تصحيح ما لم يتضح، وسجّل سؤالًا واحدًا لتراجعه معه.",
+      "Practise and ask",
+      "Watch the order of the demonstration. Repeat it with your teacher, ask for correction, and note one question to revisit."
+    ]
+  ],
+  "hisn": [
+    [
+      "ورد صغير من القرآن",
+      "اختر دعاءً قرآنيًا من قسم الأدعية المأثورة. اقرأه من النص، ثم أعد قراءته في وقت هادئ تختاره أنت.",
+      "A short Quran reading routine",
+      "Choose a Quran supplication from the Supplications section. Read it from the text and revisit it at a quiet time of your choosing."
+    ],
+    [
+      "تثبّت قبل النشر",
+      "إذا وصلك ذكر منسوب إلى حديث، فدوّن مصدره واسأل من تثق بعلمه عن صحته قبل نشره.",
+      "Check before sharing",
+      "If you receive a remembrance attributed to a hadith, note the source and ask a trusted teacher about its authenticity before sharing."
+    ]
+  ],
+  "prophets": [
+    [
+      "يوسف والعفو",
+      "اقرأ الآية ٩٢ من سورة يوسف في المصحف. تأمّل جواب يوسف لإخوته. ما الفرق بين العفو وبين تجاهل وقوع الخطأ؟",
+      "Joseph and forgiveness",
+      "Read Quran 12:92 in a mushaf. Reflect on Joseph’s answer to his brothers. How does forgiveness differ from ignoring a wrong?"
+    ],
+    [
+      "تتبّع القصة",
+      "عند قراءة قصة، دوّن اسم السورة وأرقام الآيات التي قرأتها. ارجع إلى النص عند إعادة حكاية القصة.",
+      "Follow the story",
+      "When reading a story, record the surah and verse numbers. Refer back to the text when retelling it."
+    ]
+  ],
+  "manners": [
+    [
+      "توقّف قبل الرد",
+      "إذا أزعجتك رسالة، اكتب ردّك ولا ترسله فورًا. احذف العبارة التي تسخر من صاحبها، واذكر المشكلة بأسلوب واضح ومحترم.",
+      "Pause before replying",
+      "If a message upsets you, draft a reply without sending it immediately. Remove any mockery and describe the issue respectfully."
+    ],
+    [
+      "أصلح أثر الكلمة",
+      "إذا جرحت شخصًا، سمِّ الخطأ الذي صدر منك واعتذر عنه. اسأله عمّا يمكنك فعله لإصلاح الموقف.",
+      "Repair harm caused by words",
+      "If you hurt someone, name your mistake and apologize. Ask what you can do to make things right."
+    ]
+  ],
+  "creed": [
+    [
+      "قراءة سورة الإخلاص",
+      "اقرأ السورة كاملة من الآيات أدناه. أعد قراءتها ببطء وحدّد كلمة تريد فهمها.",
+      "Read Surah Al-Ikhlas",
+      "Read the full surah in the verses below. Read again slowly and identify one word you want to understand."
+    ],
+    [
+      "اسأل عن المعنى",
+      "دوّن الكلمة والسورة والآية. راجع تفسيرًا موثوقًا مع معلّمك، وسجّل الجواب ومصدره في دفترك.",
+      "Ask about the meaning",
+      "Record the word, surah and verse. Consult a trusted commentary with your teacher and write the answer and its source."
+    ]
+  ],
+  "seerah": [
+    [
+      "من القراءة إلى السلوك",
+      "ابدأ بقراءة الآية أدناه. اختر سلوكًا عمليًا تطبّقه اليوم، مثل الوفاء بوعد قطعته أو حسن الاستماع لمن يتحدث إليك.",
+      "From reading to action",
+      "Start with the verse below. Choose one action to practise today, such as keeping a promise or listening attentively."
+    ],
+    [
+      "اقرأ بسؤال واضح",
+      "عندما تقرأ موقفًا من السيرة، اسأل: أين ورد؟ وماذا أستطيع أن أتعلم منه؟ دوّن المصدر منفصلًا عن استنتاجك.",
+      "Read with a question",
+      "When reading an account from the biography, ask where it is reported and what you can learn. Separate the source from your reflection."
+    ]
+  ],
+  "supplications": [
+    [
+      "اختر دعاءً واقرأه",
+      "تجد أدناه ثلاثة مواضع من القرآن فيها دعاء. اختر واحدًا واقرأ الآية كاملة، ثم أعدها ببطء مع النظر إلى النص.",
+      "Choose and read a supplication",
+      "The three passages below contain supplications. Choose one, read the whole verse, then repeat it slowly from the text."
+    ],
+    [
+      "احفظ الموضع",
+      "دوّن رقم السورة والآية الظاهر أسفل النص لتعود إليه. يمكنك إضافة هذا القسم إلى المفضلة أو تحديد هدف قراءة.",
+      "Keep the reference",
+      "Write down the surah and verse number below the text. Save the section as a favorite or set a reading goal."
+    ]
+  ],
+  "zakat": [
+    [
+      "رتّب بياناتك أولًا",
+      "اكتب قائمة بالأموال التي تريد السؤال عنها وتواريخها، واحتفظ بها عندك. اعرض التفاصيل على مختص ليبيّن لك ما يدخل في الحساب.",
+      "Organize your information first",
+      "List the assets and dates you want to ask about. Keep the list private and consult a qualified adviser on what should be counted."
+    ],
+    [
+      "خطّة صدقة شخصية",
+      "اختر مبلغًا تطوعيًا يناسب ميزانيتك، وحدّد جهة تعرفها، ثم سجّل ما قدّمته لتراجع خطتك الشهر المقبل.",
+      "Plan voluntary giving",
+      "Choose a voluntary amount within your budget and a recipient you know. Record what you gave and review your plan next month."
+    ]
+  ],
+  "fasting": [
+    [
+      "خطّة ليوم الصيام",
+      "راجع مواقيت الفجر والمغرب في جدول موثوق لمدينتك. جهّز السحور مسبقًا، وحدّد وقتًا للراحة ووقتًا للقراءة.",
+      "Plan a fasting day",
+      "Check dawn and sunset in a trusted local timetable. Prepare your pre-dawn meal and plan time for rest and reading."
+    ],
+    [
+      "راجع يومك",
+      "اكتب ما ساعدك اليوم وما تريد تغييره غدًا. إذا كان لديك سؤال عن حالتك الخاصة، دوّن تفاصيله واسأل من تثق بعلمه.",
+      "Review your day",
+      "Write what helped today and what you would change tomorrow. If you have a question about your own circumstances, note the details and ask a trusted teacher."
+    ]
+  ],
+  "hajj": [
+    [
+      "قائمة استعداد للسفر",
+      "ضع في قائمتك وثائق السفر، وبيانات السكن، وأرقام التواصل مع المجموعة. احتفظ بنسخة تعمل دون اتصال.",
+      "Prepare for travel",
+      "List your travel documents, accommodation details and group contacts. Keep an offline copy."
+    ],
+    [
+      "تعلّم المسار قبل الرحلة",
+      "راجع ترتيب المناسك مع دليل موثوق قبل السفر. دوّن ما التبس عليك، وحدّد مع مجموعتك نقطة لقاء في حال التفرّق.",
+      "Learn the itinerary before travel",
+      "Review the order of the rites with a trusted guide. Note questions and agree on a meeting point if separated."
+    ]
+  ]
+}

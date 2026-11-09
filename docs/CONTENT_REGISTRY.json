@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "public_identity": "Erthi | إرثي",
+  "contact": "admin@erthi.org",
+  "religious_review": "pending",
+  "entries": [
+    {
+      "path": "app/src/main/assets/quran/dua-uthmani-1.1.txt",
+      "source": "https://tanzil.net/download/",
+      "license": "CC BY 3.0; Tanzil verbatim redistribution terms and notice",
+      "version": "Uthmani 1.1; 16 verbatim verses across 11 modules",
+      "sha256": "08f04afce3d58d22f7e487a7cb2f7c75bb3e20ec43d29164bb70079f0cdf0fd5",
+      "review_status": "pending"
+    }
+  ]
+}
