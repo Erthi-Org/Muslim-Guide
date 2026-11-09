@@ -82,7 +82,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             gradle :app:connectedDebugAndroidTest --no-daemon --stacktrace
-            adb pull /sdcard/Android/data/org.erthi.guide/files/screenshots screenshots
+            adb pull /data/local/tmp/erthi-screenshots screenshots
       - uses: actions/upload-artifact@v4
         if: always()
         with:

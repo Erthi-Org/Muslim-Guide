@@ -38,9 +38,21 @@ class FoundationUiTest {
             rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(title))
             rule.onNodeWithText(title).assertIsDisplayed()
             val bitmap=InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
-            val dir=java.io.File(rule.activity.getExternalFilesDir(null),"screenshots").apply { mkdirs() }
-            java.io.File(dir,"settings-$code.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it) }
+            val activity = rule.activity
+            val screenshot = "settings-$code.png"
+            val file = java.io.File(activity.filesDir, screenshot)
+            file.outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it) }
             bitmap.recycle()
+            // Gradle uninstalls the test app before the runner collects artifacts.
+            val shellOutput = InstrumentationRegistry.getInstrumentation().uiAutomation
+                .executeShellCommand(
+                    "mkdir -p /data/local/tmp/erthi-screenshots && " +
+                        "run-as ${activity.packageName} cat files/$screenshot > /data/local/tmp/erthi-screenshots/$screenshot && " +
+                        "test -s /data/local/tmp/erthi-screenshots/$screenshot && echo saved"
+                )
+            val result = android.os.ParcelFileDescriptor.AutoCloseInputStream(shellOutput)
+                .bufferedReader().use { it.readText().trim() }
+            assertEquals("saved", result)
         }
         assertEquals(!before,prefs.getBoolean("contrast",false))
     }
