@@ -27,9 +27,10 @@ class GuideNavigationTest {
         val moduleButton = hasText(title) and hasClickAction() and !hasSetTextAction()
         rule.onNode(hasScrollToIndexAction()).performScrollToNode(moduleButton)
         rule.onNode(moduleButton).performClick()
-        val pending = rule.activity.getString(R.string.pending)
-        scrollTo(pending)
-        rule.onNodeWithText(pending).assertIsDisplayed()
+        val activityTitle = if (rule.activity.resources.configuration.locales[0].language == "ar")
+            "أمانة في المدرسة" else "Honesty at school"
+        scrollTo(activityTitle)
+        rule.onNodeWithText(activityTitle).assertIsDisplayed()
         val goal = rule.activity.getString(R.string.goal)
         scrollTo(goal)
         rule.onNodeWithText(goal).performClick()

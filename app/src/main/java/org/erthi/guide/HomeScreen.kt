@@ -138,7 +138,8 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                         val done = detail.id in model.finished
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             TextButton(onClick = { selected = null }) { Text(stringResource(R.string.back), color = MaterialTheme.colorScheme.primary) }
-                            IllustratedModule(detail, bitmap, Modifier.fillMaxWidth(), true)
+                            PageTitle(stringResource(detail.title))
+                            LearningActivities(detail.id)
 
                             Button(onClick = { model.goal(detail.id) }, enabled = detail.id !in model.goals) {
                                 Text(stringResource(if (detail.id in model.goals) R.string.target_saved else R.string.goal))
@@ -325,6 +326,27 @@ private fun GuideNavigation(section: String, onSettings: () -> Unit, navigate: (
                 }
                 Text(stringResource(tab.label), color = tint, style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center)
+            }
+        }
+    }
+}
+
+@Composable
+private fun LearningActivities(moduleId: String) {
+    val assets = LocalContext.current.assets
+    val activities = remember(assets) {
+        assets.open("learning-activities.json").bufferedReader().use {
+            org.json.JSONObject(it.readText())
+        }
+    }.getJSONArray(moduleId)
+    val arabic = androidx.compose.ui.platform.LocalConfiguration.current.locales[0].language == "ar"
+    for (index in 0 until activities.length()) {
+        val activity = activities.getJSONArray(index)
+        Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp)) {
+            Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(activity.getString(if (arabic) 0 else 2),
+                    style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+                Text(activity.getString(if (arabic) 1 else 3), style = MaterialTheme.typography.bodyLarge)
             }
         }
     }

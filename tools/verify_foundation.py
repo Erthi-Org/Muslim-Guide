@@ -40,3 +40,9 @@ if (r/'docs/upstream/IMPORT_MANIFEST.json').exists():
  assert 'Copyright (c) 2026 NEXVARY' in (r/'docs/upstream/HIFZAI-MIT.txt').read_text()
  print('Source archive, migrated file digests, 6236 canonical records and license notices: PASS')
 print('Eight locale sets, format arguments, privacy manifest, content registry and credential guards: PASS')
+
+activities = json.loads((r/'app/src/main/assets/learning-activities.json').read_text())
+module_ids = set(re.findall(r'LearningModule\("([^"]+)"', (r/'app/src/main/java/org/erthi/guide/HomeScreen.kt').read_text()))
+assert set(activities) == module_ids
+assert all(len(rows) == 2 and all(len(row) == 4 and all(isinstance(x, str) and x.strip() for x in row) for row in rows) for rows in activities.values())
+print("Offline activities: two bilingual entries per module")
