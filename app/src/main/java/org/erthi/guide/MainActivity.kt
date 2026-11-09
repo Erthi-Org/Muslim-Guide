@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -94,8 +96,14 @@ class MainActivity : AppCompatActivity() {
                 RadioButton(model.appearance == value, null); Text(stringResource(res))
             }
         }
-        item { Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text(stringResource(R.string.high_contrast), Modifier.weight(1f)); Switch(model.contrast, model::contrast)
+        item { Row(
+            Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .toggleable(value = model.contrast, role = Role.Switch, onValueChange = model::contrast),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        ) {
+            Text(stringResource(R.string.high_contrast), Modifier.weight(1f))
+            Switch(checked = model.contrast, onCheckedChange = null)
         } }
         item { Text(stringResource(R.string.review_notice)); Spacer(Modifier.height(20.dp)) }
     }

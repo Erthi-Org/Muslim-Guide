@@ -60,7 +60,7 @@ class GuideModel(app: Application): AndroidViewModel(app) {
         item {
             // Full-width labels remain readable at large font sizes and in long translations.
             listOf("home" to R.string.home,"favorites" to R.string.favorites,"library" to R.string.library,"progress" to R.string.progress).forEach { (id,res) ->
-                OutlinedButton(onClick={section=id;selected=null},modifier=Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick={section=id;selected=null},modifier=Modifier.fillMaxWidth().semantics { this.selected = section == id }) {
                     Text(stringResource(res));if(section==id) { Spacer(Modifier.width(8.dp));Icon(Icons.Default.Check,null) }
                 }
             }
@@ -79,11 +79,11 @@ class GuideModel(app: Application): AndroidViewModel(app) {
         } else if(section=="library") {
             item { PageTitle(stringResource(R.string.library));Text(stringResource(R.string.pending));PageTitle(stringResource(R.string.sources));Text("https://erthi.org · admin@erthi.org") }
         } else {
-            item { OutlinedTextField(value=query,onValueChange={query=it},label={Text(stringResource(R.string.search))},modifier=Modifier.fillMaxWidth()) }
+            if (section == "home") item { OutlinedTextField(value=query,onValueChange={query=it},label={Text(stringResource(R.string.search))},modifier=Modifier.fillMaxWidth(),singleLine=true) }
             // Resolve localized titles before filtering; state stores stable IDs, never translated labels.
             items(modules,key={it.id}) { module ->
                 val title=stringResource(module.title)
-                if((section!="favorites" || module.id in model.favorites) && (section!="progress" || module.id in model.goals) && (query.isBlank() || title.contains(query,ignoreCase=true))) {
+                if((section!="favorites" || module.id in model.favorites) && (section!="progress" || module.id in model.goals) && (section != "home" || matchesModuleQuery(title, query))) {
                     Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp)) {
                         Icon(when(module.id) {
                             "child"->Icons.Default.ChildCare;"prayer"->Icons.Default.SelfImprovement;"hisn"->Icons.Default.Shield
@@ -105,7 +105,7 @@ class GuideModel(app: Application): AndroidViewModel(app) {
 }
 @Composable private fun FavoriteButton(module:LearningModule,model:GuideModel) {
     val checked=module.id in model.favorites
-    OutlinedButton(onClick={model.favorite(module.id)},modifier=Modifier.fillMaxWidth()) {
+    OutlinedButton(onClick={model.favorite(module.id)},modifier=Modifier.fillMaxWidth().semantics { selected = checked }) {
         Icon(if(checked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,null)
         Spacer(Modifier.width(8.dp));Text(stringResource(if(checked) R.string.remove_favorite else R.string.add_favorite))
     }
