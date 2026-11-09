@@ -64,4 +64,10 @@
  <string name="zakat">Zakat et aumône</string>
  <string name="fasting">Jeûne et Ramadan</string>
  <string name="hajj">Hajj et Omra</string>
+ <string name="guide_tagline">Culte et rappel pour la famille musulmane</string>
+ <string name="clear_search">Effacer la recherche</string>
+ <string name="no_search_results">Aucune section correspondante</string>
+ <string name="goal_progress">%1$d objectifs sur %2$d atteints</string>
+ <string name="goal_finished">J’ai atteint cet objectif</string>
+ <string name="more">Plus</string>
 </resources>

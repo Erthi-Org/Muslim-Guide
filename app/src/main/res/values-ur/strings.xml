@@ -64,4 +64,10 @@
  <string name="zakat">زکوٰۃ اور صدقہ</string>
  <string name="fasting">روزہ اور رمضان</string>
  <string name="hajj">حج اور عمرہ</string>
+ <string name="guide_tagline">مسلمان خاندان کے لیے عبادت اور ذکر</string>
+ <string name="clear_search">تلاش صاف کریں</string>
+ <string name="no_search_results">کوئی متعلقہ حصہ نہیں ملا</string>
+ <string name="goal_progress">%2$d میں سے %1$d اہداف مکمل</string>
+ <string name="goal_finished">میں نے یہ ہدف مکمل کیا</string>
+ <string name="more">مزید</string>
 </resources>

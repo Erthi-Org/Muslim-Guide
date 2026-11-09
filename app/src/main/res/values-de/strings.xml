@@ -64,4 +64,10 @@
  <string name="zakat">Zakat und Almosen</string>
  <string name="fasting">Fasten und Ramadan</string>
  <string name="hajj">Hadsch und Umra</string>
+ <string name="guide_tagline">Gottesdienst und Gedenken für die muslimische Familie</string>
+ <string name="clear_search">Suche löschen</string>
+ <string name="no_search_results">Keine passenden Bereiche</string>
+ <string name="goal_progress">%1$d von %2$d Zielen erreicht</string>
+ <string name="goal_finished">Ich habe dieses Ziel erreicht</string>
+ <string name="more">Mehr</string>
 </resources>

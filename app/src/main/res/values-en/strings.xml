@@ -64,4 +64,10 @@
  <string name="zakat">Zakat and Charity</string>
  <string name="fasting">Fasting and Ramadan</string>
  <string name="hajj">Hajj and Umrah</string>
+ <string name="guide_tagline">Worship and remembrance for the Muslim family</string>
+ <string name="clear_search">Clear search</string>
+ <string name="no_search_results">No matching sections</string>
+ <string name="goal_progress">%1$d of %2$d goals completed</string>
+ <string name="goal_finished">I completed this goal</string>
+ <string name="more">More</string>
 </resources>

@@ -64,4 +64,10 @@
  <string name="zakat">Zakat dan sedekah</string>
  <string name="fasting">Puasa dan Ramadan</string>
  <string name="hajj">Haji dan umrah</string>
+ <string name="guide_tagline">Ibadah dan zikir untuk keluarga Muslim</string>
+ <string name="clear_search">Hapus pencarian</string>
+ <string name="no_search_results">Tidak ada bagian yang cocok</string>
+ <string name="goal_progress">%1$d dari %2$d tujuan selesai</string>
+ <string name="goal_finished">Saya telah menyelesaikan tujuan ini</string>
+ <string name="more">Lainnya</string>
 </resources>

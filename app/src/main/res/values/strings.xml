@@ -64,4 +64,10 @@
  <string name="zakat">الزكاة والصدقة</string>
  <string name="fasting">الصيام ورمضان</string>
  <string name="hajj">الحج والعمرة</string>
+ <string name="guide_tagline">تعلّم العبادة والأذكار للأسرة المسلمة</string>
+ <string name="clear_search">مسح البحث</string>
+ <string name="no_search_results">لا توجد أقسام تطابق البحث</string>
+ <string name="goal_progress">أُنجز %1$d من %2$d هدف</string>
+ <string name="goal_finished">أنجزت هذا الهدف</string>
+ <string name="more">المزيد</string>
 </resources>

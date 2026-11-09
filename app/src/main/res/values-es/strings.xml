@@ -64,4 +64,10 @@
  <string name="zakat">Zakat y caridad</string>
  <string name="fasting">Ayuno y Ramadán</string>
  <string name="hajj">Hayy y Umra</string>
+ <string name="guide_tagline">Adoración y recuerdo para la familia musulmana</string>
+ <string name="clear_search">Borrar búsqueda</string>
+ <string name="no_search_results">No hay secciones coincidentes</string>
+ <string name="goal_progress">%1$d de %2$d objetivos completados</string>
+ <string name="goal_finished">He completado este objetivo</string>
+ <string name="more">Más</string>
 </resources>

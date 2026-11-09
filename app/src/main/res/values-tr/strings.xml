@@ -64,4 +64,10 @@
  <string name="zakat">Zekât ve sadaka</string>
  <string name="fasting">Oruç ve Ramazan</string>
  <string name="hajj">Hac ve umre</string>
+ <string name="guide_tagline">Müslüman aile için ibadet ve zikir</string>
+ <string name="clear_search">Aramayı temizle</string>
+ <string name="no_search_results">Eşleşen bölüm yok</string>
+ <string name="goal_progress">%2$d hedeften %1$d tamamlandı</string>
+ <string name="goal_finished">Bu hedefi tamamladım</string>
+ <string name="more">Daha fazla</string>
 </resources>
