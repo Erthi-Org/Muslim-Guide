@@ -70,4 +70,5 @@
  <string name="goal_progress">%1$d objectifs sur %2$d atteints</string>
  <string name="goal_finished">J’ai atteint cet objectif</string>
  <string name="more">Plus</string>
+ <string name="quran_supplications">Invocations du Coran</string>
 </resources>

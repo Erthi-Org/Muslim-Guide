@@ -3,5 +3,14 @@
   "public_identity": "Erthi | إرثي",
   "contact": "admin@erthi.org",
   "religious_review": "pending",
-  "entries": []
+  "entries": [
+    {
+      "path": "app/src/main/assets/quran/dua-uthmani-1.1.txt",
+      "source": "https://tanzil.net/download/",
+      "license": "CC BY 3.0; Tanzil verbatim redistribution terms and notice",
+      "version": "Uthmani 1.1; 2:201, 7:23, 14:40",
+      "sha256": "45cd1331f9eccb6efff8652671806c9462087c07040e8f18a2e6d2bb397b1608",
+      "review_status": "pending"
+    }
+  ]
 }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -133,7 +135,8 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             TextButton(onClick = { selected = null }) { Text(stringResource(R.string.back), color = gold) }
                             IllustratedModule(detail, bitmap, Modifier.fillMaxWidth(), true)
-                            Text(stringResource(R.string.pending), color = Color.White)
+                            if (detail.id == "supplications") QuranSupplications()
+                            else Text(stringResource(R.string.pending), color = Color.White)
                             Button(onClick = { model.goal(detail.id) }, enabled = detail.id !in model.goals) {
                                 Text(stringResource(if (detail.id in model.goals) R.string.target_saved else R.string.goal))
                             }
@@ -313,6 +316,32 @@ private fun GuideNavigation(section: String, onSettings: () -> Unit, navigate: (
             }
         }
     }
+}
+
+@Composable
+private fun QuranSupplications() {
+    val assets = LocalContext.current.assets
+    val verses = remember(assets) {
+        assets.open("quran/dua-uthmani-1.1.txt").bufferedReader().useLines { lines ->
+            lines.filter { it.firstOrNull()?.isDigit() == true }
+                .map { it.split('|', limit = 3) }.toList()
+        }
+    }
+    Text(stringResource(R.string.quran_supplications), color = gold,
+        style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
+    verses.forEach { verse ->
+        Surface(color = Color(0xFF122948), shape = RoundedCornerShape(16.dp)) {
+            Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SelectionContainer {
+                    Text(verse[2], color = Color.White, style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Right, modifier = Modifier.fillMaxWidth())
+                }
+                Text("${verse[0]}:${verse[1]}", color = gold, style = MaterialTheme.typography.labelMedium)
+            }
+        }
+    }
+    Text("Tanzil Project · https://tanzil.net", color = Color(0xFFDEE8FA),
+        style = MaterialTheme.typography.labelMedium)
 }
 
 @Composable

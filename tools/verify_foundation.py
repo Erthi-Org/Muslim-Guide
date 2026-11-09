@@ -24,6 +24,7 @@ for f in r.rglob('*'):
 registry=json.loads((r/'docs/CONTENT_REGISTRY.json').read_text())
 for e in registry['entries']:
  assert all(e.get(k) for k in ['source','license','version','sha256','review_status'])
+ assert hashlib.sha256((r/e['path']).read_bytes()).hexdigest() == e['sha256']
  assert e['review_status'] in ['pending','approved']
 if (r/'docs/upstream/IMPORT_MANIFEST.json').exists():
  imp=json.loads((r/'docs/upstream/IMPORT_MANIFEST.json').read_text())

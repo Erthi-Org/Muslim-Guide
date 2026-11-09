@@ -67,4 +67,17 @@ class GuideNavigationTest {
         rule.onNodeWithText(finished).assertIsOn()
         rule.onNodeWithText(rule.activity.getString(R.string.goal_progress, 1, 1)).assertExists()
     }
+
+    @Test fun libraryOpensOfflineQuranSupplications() {
+        rule.onNodeWithText(rule.activity.getString(R.string.library)).performClick()
+        val title = rule.activity.getString(R.string.supplications)
+        scrollTo(title)
+        rule.onNodeWithText(title).performClick()
+        val heading = rule.activity.getString(R.string.quran_supplications)
+        scrollTo(heading)
+        rule.onNodeWithText(heading).assertIsDisplayed()
+        scrollTo("14:40")
+        rule.onNodeWithText("14:40").assertIsDisplayed()
+    }
+
 }
