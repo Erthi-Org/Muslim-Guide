@@ -83,6 +83,7 @@ class GuideNavigationTest {
         scrollTo(title)
         rule.onNodeWithText(title).assertIsDisplayed()
         searchField.performTextReplacement(title)
+        searchField.performImeAction()
         scrollTo(title)
         rule.onNode(hasText(title) and hasClickAction() and !hasSetTextAction()).assertIsDisplayed()
     }
