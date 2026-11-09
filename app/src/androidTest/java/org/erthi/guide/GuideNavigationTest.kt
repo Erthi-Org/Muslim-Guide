@@ -72,13 +72,17 @@ class GuideNavigationTest {
         val title = if (arabic) "أمانة في المدرسة" else "Honesty at school"
         val otherTitle = if (arabic) "كلمة طيبة" else "A kind word"
 
-        rule.onNode(hasSetTextAction()).performTextInput(query)
+        val searchField = rule.onNode(hasSetTextAction())
+        searchField.performTextInput(query).performImeAction()
+        scrollTo(title)
         rule.onNodeWithText(title).assertIsDisplayed().performClick()
         rule.onNodeWithText(query, substring = true).assertIsDisplayed()
         rule.onNodeWithText(otherTitle).assertDoesNotExist()
         rule.onNodeWithText(rule.activity.getString(R.string.back)).performClick()
+        scrollTo(title)
         rule.onNodeWithText(title).assertIsDisplayed()
-        rule.onNode(hasSetTextAction()).performTextReplacement(title)
+        searchField.performTextReplacement(title)
+        scrollTo(title)
         rule.onNode(hasText(title) and hasClickAction() and !hasSetTextAction()).assertIsDisplayed()
     }
 

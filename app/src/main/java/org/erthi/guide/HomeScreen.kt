@@ -10,10 +10,14 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.*
@@ -35,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -118,6 +123,9 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedActivity by rememberSaveable { mutableStateOf<Int?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
+    val browseListState = rememberLazyListState()
+    val searchListState = rememberLazyListState()
+    val detailListState = rememberLazyListState()
     val bitmap = ImageBitmap.imageResource(R.drawable.guide_reference)
     val detail = modules.firstOrNull { it.id == selected }
     val assets = LocalContext.current.assets
@@ -158,6 +166,11 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
             val extraArt = if (compact || query.isNotBlank()) 0.dp
                 else ((maxHeight - 420.dp).coerceIn(0.dp, 180.dp) / 3f)
             LazyColumn(
+                state = when {
+                    detail != null -> detailListState
+                    section == "home" && query.isNotBlank() -> searchListState
+                    else -> browseListState
+                },
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -258,10 +271,13 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
             }
         }
         if (section == "home" && detail == null) {
+            val focusManager = LocalFocusManager.current
             OutlinedTextField(
                 value = query, onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp), singleLine = true,
                 label = { Text(stringResource(R.string.search)) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = if (query.isEmpty()) null else ({
                     IconButton(onClick = { query = "" }) {
