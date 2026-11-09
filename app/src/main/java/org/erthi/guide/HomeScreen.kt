@@ -116,12 +116,41 @@ private fun ReferenceArt(bitmap: ImageBitmap, art: Art, modifier: Modifier) {
 fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
     var section by rememberSaveable { mutableStateOf("home") }
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
+    var selectedActivity by rememberSaveable { mutableStateOf<Int?>(null) }
     var query by rememberSaveable { mutableStateOf("") }
     val bitmap = ImageBitmap.imageResource(R.drawable.guide_reference)
     val detail = modules.firstOrNull { it.id == selected }
+    val assets = LocalContext.current.assets
+    val arabic = androidx.compose.ui.platform.LocalConfiguration.current.locales[0].language == "ar"
+    val activities = remember(assets, arabic) {
+        val data = assets.open("learning-activities.json").bufferedReader().use {
+            org.json.JSONObject(it.readText())
+        }
+        modules.associate { module ->
+            val entries = data.getJSONArray(module.id)
+            module.id to List(entries.length()) { index ->
+                val entry = entries.getJSONArray(index)
+                val offset = if (arabic) 0 else 2
+                LearningActivity(entry.getString(offset), entry.getString(offset + 1))
+            }
+        }
+    }
     val visible = modules.filter { matchesModuleQuery(stringResource(it.title), query) }
+    val activityMatches = remember(query, activities) {
+        if (query.isBlank()) emptyList() else modules.flatMap { module ->
+            activities.getValue(module.id).mapIndexedNotNull { index, activity ->
+                if (matchesModuleQuery(activity.title, query) || matchesModuleQuery(activity.body, query)) {
+                    ActivityMatch(module, index, activity)
+                } else null
+            }
+        }
+    }
+    fun closeDetail() {
+        selected = null
+        selectedActivity = null
+    }
     androidx.activity.compose.BackHandler(selected != null || section != "home") {
-        if (selected != null) selected = null else section = "home"
+        if (selected != null) closeDetail() else section = "home"
     }
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("guide-root").safeDrawingPadding().imePadding()) {
         BoxWithConstraints(Modifier.weight(1f)) {
@@ -137,9 +166,19 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                     item(key = "detail") {
                         val done = detail.id in model.finished
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            TextButton(onClick = { selected = null }) { Text(stringResource(R.string.back), color = MaterialTheme.colorScheme.primary) }
+                            TextButton(onClick = ::closeDetail) { Text(stringResource(R.string.back), color = MaterialTheme.colorScheme.primary) }
                             PageTitle(stringResource(detail.title))
-                            LearningActivities(detail.id)
+                            val lessons = activities.getValue(detail.id)
+                            val focused = selectedActivity?.let(lessons::getOrNull)
+                            if (focused != null) {
+                                LearningActivityCard(focused)
+                                TextButton(onClick = { selectedActivity = null }) {
+                                    Text(stringResource(detail.title))
+                                }
+                                QuranReading(detail.id)
+                                return@Column
+                            }
+                            lessons.forEach { LearningActivityCard(it) }
 
                             Button(onClick = { model.goal(detail.id) }, enabled = detail.id !in model.goals) {
                                 Text(stringResource(if (detail.id in model.goals) R.string.target_saved else R.string.goal))
@@ -152,14 +191,30 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                         }
                     }
                 } else if (section == "home") {
-                    item(key = "hero") { GuideHero(bitmap, onSettings) }
                     if (query.isBlank()) {
+                        item(key = "hero") { GuideHero(bitmap, onSettings) }
                         moduleRows(visible.take(3), if (compact) 2 else 3, bitmap, true, extraArt) { selected = it.id }
                         moduleRows(visible.drop(3), if (compact) 2 else 4, bitmap, false, extraArt) { selected = it.id }
                     } else {
                         moduleRows(visible, if (compact) 2 else 3, bitmap, false) { selected = it.id }
+                        items(activityMatches, key = { "activity-${it.module.id}-${it.index}" }) { result ->
+                            Surface(
+                                onClick = {
+                                    selected = result.module.id
+                                    selectedActivity = result.index
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                shape = RoundedCornerShape(16.dp)
+                            ) {
+                                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Text(result.activity.title, style = MaterialTheme.typography.titleMedium)
+                                    Text(stringResource(result.module.title), style = MaterialTheme.typography.bodyMedium)
+                                }
+                            }
+                        }
                     }
-                    if (visible.isEmpty()) item {
+                    if (visible.isEmpty() && activityMatches.isEmpty()) item {
                         Text(stringResource(R.string.no_search_results), color = MaterialTheme.colorScheme.onSurface)
                     }
                 } else {
@@ -223,7 +278,7 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                 )
             )
         }
-        GuideNavigation(section, onSettings) { section = it; selected = null }
+        GuideNavigation(section, onSettings) { section = it; closeDetail() }
     }
 }
 
@@ -331,23 +386,15 @@ private fun GuideNavigation(section: String, onSettings: () -> Unit, navigate: (
     }
 }
 
+private data class LearningActivity(val title: String, val body: String)
+private data class ActivityMatch(val module: LearningModule, val index: Int, val activity: LearningActivity)
+
 @Composable
-private fun LearningActivities(moduleId: String) {
-    val assets = LocalContext.current.assets
-    val activities = remember(assets) {
-        assets.open("learning-activities.json").bufferedReader().use {
-            org.json.JSONObject(it.readText())
-        }
-    }.getJSONArray(moduleId)
-    val arabic = androidx.compose.ui.platform.LocalConfiguration.current.locales[0].language == "ar"
-    for (index in 0 until activities.length()) {
-        val activity = activities.getJSONArray(index)
-        Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp)) {
-            Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(activity.getString(if (arabic) 0 else 2),
-                    style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
-                Text(activity.getString(if (arabic) 1 else 3), style = MaterialTheme.typography.bodyLarge)
-            }
+private fun LearningActivityCard(activity: LearningActivity) {
+    Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(16.dp)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(activity.title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+            Text(activity.body, style = MaterialTheme.typography.bodyLarge)
         }
     }
 }

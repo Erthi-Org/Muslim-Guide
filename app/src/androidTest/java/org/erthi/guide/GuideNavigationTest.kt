@@ -66,6 +66,22 @@ class GuideNavigationTest {
         rule.onNodeWithText(rule.activity.getString(R.string.goal_progress, 1, 1)).assertExists()
     }
 
+    @Test fun searchFindsActivityByBodyAndOpensItDirectly() {
+        val arabic = rule.activity.resources.configuration.locales[0].language == "ar"
+        val query = if (arabic) "سلّمه للمعلم" else "Give it to your teacher"
+        val title = if (arabic) "أمانة في المدرسة" else "Honesty at school"
+        val otherTitle = if (arabic) "كلمة طيبة" else "A kind word"
+
+        rule.onNode(hasSetTextAction()).performTextInput(query)
+        rule.onNodeWithText(title).assertIsDisplayed().performClick()
+        rule.onNodeWithText(query, substring = true).assertIsDisplayed()
+        rule.onNodeWithText(otherTitle).assertDoesNotExist()
+        rule.onNodeWithText(rule.activity.getString(R.string.back)).performClick()
+        rule.onNodeWithText(title).assertIsDisplayed()
+        rule.onNode(hasSetTextAction()).performTextReplacement(title)
+        rule.onNode(hasText(title) and hasClickAction() and !hasSetTextAction()).assertIsDisplayed()
+    }
+
     @Test fun libraryOpensOfflineQuranSupplications() {
         rule.onNodeWithText(rule.activity.getString(R.string.library)).performClick()
         val title = rule.activity.getString(R.string.supplications)
