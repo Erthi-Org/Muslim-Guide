@@ -1,5 +1,7 @@
 package org.erthi.guide
 
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import org.junit.Rule
@@ -26,7 +28,12 @@ class GuideNavigationTest {
         val favorite = rule.activity.getString(R.string.add_favorite)
         scrollTo(favorite)
         rule.onNodeWithText(favorite).performClick()
-        rule.activityRule.scenario.recreate()
+        rule.activityRule.scenario.onActivity {
+            it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+        rule.waitUntil(30000) {
+            rule.activity.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        }
         val remove = rule.activity.getString(R.string.remove_favorite)
         scrollTo(remove)
         rule.onNodeWithText(remove).assertIsDisplayed()

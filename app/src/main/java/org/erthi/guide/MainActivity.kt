@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
@@ -85,14 +87,17 @@ class MainActivity : AppCompatActivity() {
         items(localeCodes.indices.toList()) { index ->
             val code = localeCodes[index]
             val text = localeNames[index]
-            OutlinedButton(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+            OutlinedButton(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .semantics { role = Role.RadioButton; selected = chosen == code },
                 onClick = { AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code)) }) {
                 RadioButton(selected = chosen == code, onClick = null); Spacer(Modifier.width(8.dp)); Text(text)
             }
         }
         item { PageTitle(stringResource(R.string.appearance)) }
         items(listOf("system" to R.string.system, "dark" to R.string.dark, "light" to R.string.light)) { (value, res) ->
-            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { model.appearance(value) }) {
+            OutlinedButton(modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .semantics { role = Role.RadioButton; selected = model.appearance == value },
+                onClick = { model.appearance(value) }) {
                 RadioButton(model.appearance == value, null); Text(stringResource(res))
             }
         }

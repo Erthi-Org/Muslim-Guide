@@ -1,7 +1,5 @@
 package org.erthi.guide
 
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.os.LocaleListCompat
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -26,12 +24,13 @@ class FoundationUiTest {
         rule.waitForIdle()
         assertEquals(!before,prefs.getBoolean("contrast",false))
         // Exercise real application locale recreation, including Urdu RTL and long German UI.
-        for(code in listOf("en","ur","de","ar")) {
-            InstrumentationRegistry.getInstrumentation().runOnMainSync {
-                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code))
-            }
+        for ((code, label) in listOf("en" to "English", "ur" to "اردو", "de" to "Deutsch", "ar" to "العربية")) {
+            rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(label))
+            rule.onNodeWithText(label).performClick()
             rule.waitUntil(30000) { rule.activity.resources.configuration.locales[0].language==code }
             rule.waitForIdle()
+            rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(label))
+            rule.onNodeWithText(label).assertIsSelected()
             val direction=rule.activity.resources.configuration.layoutDirection
             assertEquals(if(code in listOf("ar","ur")) 1 else 0,direction)
             val title = rule.activity.getString(R.string.settings)
