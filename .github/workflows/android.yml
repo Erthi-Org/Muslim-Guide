@@ -32,7 +32,7 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/aapt2" dump permissions app/build/outputs/apk/debug/app-debug.apk > app/build/permissions.txt
           python3 tools/check_apk.py app/build/outputs/apk/debug/app-debug.apk app/build/permissions.txt
           cd app/build/outputs/apk/debug
-          sha256sum app-debug.apk > SHA256SUMS
+          sha256sum app-debug.apk | tee SHA256SUMS
       - name: Upload test-only APK and evidence
         uses: actions/upload-artifact@v4
         with:

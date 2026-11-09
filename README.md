@@ -1,6 +1,6 @@
 # دليل المسلم | Muslim Guide
 
-Erthi | إرثي — Free & Open-Source Islamic Software  
+Erthi | إرثي — Free & Open-Source Islamic Software
 https://erthi.org · admin@erthi.org
 
 Android foundation alpha with 11 navigable learning modules, localized module search, on-device favorites and learning goals, library review state and settings. Screens are implemented; reviewed religious lessons are not bundled yet. Learning goals are not completed lessons.
@@ -18,7 +18,7 @@ This is 0.1.0-alpha, for technical testing. No scholarly certification, producti
 Use Java 17 and Android SDK 35:
 
 ```sh
-./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest :app:dependencyInventory
+gradle :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest :app:dependencyInventory
 python3 tools/verify_foundation.py
 ```
 
