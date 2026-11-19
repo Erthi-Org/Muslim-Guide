@@ -106,3 +106,5 @@ jobs:
               f.write("Verified Claude response: ERTHI_BEDROCK_OK\\n\\n")
               f.write("SDK estimated cost USD: " + str(result.get("total_cost_usd", "not reported")) + "\\n")
           PY
+
+# OIDC and STS verified before enabling this one-shot smoke.
