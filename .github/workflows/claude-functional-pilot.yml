@@ -105,7 +105,6 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -115,7 +114,7 @@ jobs:
         with:
           name: development-patch
           path: ${{ runner.temp }}
-      - name: Publish tested patch as a draft
+      - name: Push tested patch for the central publisher
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -132,25 +131,4 @@ jobs:
           branch="claude/erthi-$GITHUB_RUN_ID"
           gh auth setup-git
           git push origin "HEAD:refs/heads/$branch"
-      - name: Create repository-scoped App token
-        id: draft-token
-        uses: actions/create-github-app-token@v3.2.0
-        with:
-          app-id: '5843464'
-          private-key: ${{ secrets.ERTHI_CLAUDE_APP_PRIVATE_KEY }}
-          owner: Erthi-Org
-          repositories: Muslim-Guide
-          permission-contents: read
-          permission-pull-requests: write
-      - name: Open the draft with the App token
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.draft-token.outputs.token }}
-        run: |
-          base=work/android-foundation
-          branch="claude/erthi-$GITHUB_RUN_ID"
-          gh pr create --draft --base "$base" --head "$branch" \
-            --title 'Validate APK checker command-line arguments' \
-            --body "Claude Bedrock pilot. Isolated tests passed: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-
-# Verify draft publication after the installation accepted pull-request access.
+          printf "Run ID for central publication: %s\n" "$GITHUB_RUN_ID" >> "$GITHUB_STEP_SUMMARY"
