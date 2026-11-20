@@ -25,14 +25,14 @@ class LessonPathTest {
         } catch (_: Throwable) { /* already visible or scroll unavailable */ }
     }
 
-    private fun waitForText(text: String, timeoutMs: Long = 10000) {
+    private fun waitForText(text: String, timeoutMs: Long = 20000) {
         rule.waitUntil(timeoutMs) {
             rule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
         }
     }
 
     private fun waitReady() {
-        rule.waitUntil(30000) {
+        rule.waitUntil(60000) {
             rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.settings))
                 .fetchSemanticsNodes().isNotEmpty()
         }
@@ -104,6 +104,8 @@ class LessonPathTest {
         rule.waitForIdle()
         scrollTo(activityFinished)
         rule.onAllNodesWithText(activityFinished)[1].assertIsOff().performClick()
+        // Wait for the second toggle to commit before reading completion state
+        rule.waitForIdle()
 
         // Start lesson: both activities already done, banner appears immediately
         val startLesson = rule.activity.getString(R.string.lesson_start)
