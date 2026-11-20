@@ -76,4 +76,7 @@
  <string name="goals_hint">Open a section and set a learning goal to track it here.</string>
  <string name="activity_finished">I completed this activity</string>
  <string name="activity_progress">Activities completed: %1$d of %2$d</string>
+ <string name="lesson_start">Start Lesson</string>
+ <string name="lesson_step">Step %1$d of %2$d</string>
+ <string name="lesson_all_done">All lesson steps completed</string>
 </resources>

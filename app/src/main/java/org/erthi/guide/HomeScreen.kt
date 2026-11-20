@@ -130,6 +130,7 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
     var section by rememberSaveable { mutableStateOf("home") }
     var selected by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedActivity by rememberSaveable { mutableStateOf<Int?>(null) }
+    var lessonStep by rememberSaveable { mutableStateOf(-1) }
     var query by rememberSaveable { mutableStateOf("") }
     val browseListState = rememberLazyListState()
     val searchListState = rememberLazyListState()
@@ -167,9 +168,14 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
     fun closeDetail() {
         selected = null
         selectedActivity = null
+        lessonStep = -1
     }
-    androidx.activity.compose.BackHandler(selected != null || section != "home") {
-        if (selected != null) closeDetail() else section = "home"
+    androidx.activity.compose.BackHandler(selected != null || section != "home" || lessonStep >= 0) {
+        when {
+            lessonStep >= 0 -> lessonStep = -1
+            selected != null -> closeDetail()
+            else -> section = "home"
+        }
     }
     Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).testTag("guide-root").safeDrawingPadding().imePadding()) {
         BoxWithConstraints(Modifier.weight(1f)) {
@@ -191,8 +197,8 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                         val done = detail.id in model.finished
                         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                             TextButton(onClick = ::closeDetail) { Text(stringResource(R.string.back), color = MaterialTheme.colorScheme.primary) }
-                            PageTitle(stringResource(detail.title))
                             val lessons = activities.getValue(detail.id)
+                            val allActivitiesDone = lessons.all { it.id in model.completedActivities }
                             val focused = selectedActivity?.let(lessons::getOrNull)
                             if (focused != null) {
                                 LearningActivityCard(focused, model)
@@ -201,6 +207,40 @@ fun HomeScreen(onSettings: () -> Unit, model: GuideModel = viewModel()) {
                                 }
                                 QuranReading(detail.id)
                                 return@Column
+                            }
+                            if (lessonStep >= 0) {
+                                if (allActivitiesDone) {
+                                    Surface(color = MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(16.dp)) {
+                                        Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(end = 8.dp))
+                                            Text(stringResource(R.string.lesson_all_done), color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.titleMedium)
+                                        }
+                                    }
+                                    lessons.forEach { LearningActivityCard(it, model) }
+                                } else {
+                                    Text(stringResource(R.string.lesson_step, lessonStep + 1, 3), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                                    when (lessonStep) {
+                                        0 -> LearningActivityCard(lessons[0], model)
+                                        1 -> QuranReading(detail.id)
+                                        else -> LearningActivityCard(lessons[1], model)
+                                    }
+                                    if (lessonStep < 2) {
+                                        Button(onClick = { lessonStep++ }, modifier = Modifier.align(Alignment.End)) {
+                                            Text(stringResource(R.string.next))
+                                        }
+                                    }
+                                }
+                                TextButton(onClick = { lessonStep = -1 }) { Text(stringResource(detail.title)) }
+                                return@Column
+                            }
+                            PageTitle(stringResource(detail.title))
+                            Button(
+                                onClick = { lessonStep = 0 },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = null)
+                                Spacer(Modifier.width(4.dp))
+                                Text(stringResource(R.string.lesson_start))
                             }
                             lessons.forEach { LearningActivityCard(it, model) }
 

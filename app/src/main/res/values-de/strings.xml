@@ -76,4 +76,7 @@
  <string name="goals_hint">Setze in einem Bereich ein Lernziel.</string>
  <string name="activity_finished">Ich habe diese Aktivität abgeschlossen</string>
  <string name="activity_progress">Abgeschlossene Aktivitäten: %1$d von %2$d</string>
+ <string name="lesson_start">Lektion starten</string>
+ <string name="lesson_step">Schritt %1$d von %2$d</string>
+ <string name="lesson_all_done">Alle Lernschritte abgeschlossen</string>
 </resources>

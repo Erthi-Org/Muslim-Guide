@@ -76,4 +76,7 @@
  <string name="goals_hint">Ouvrez une rubrique et fixez un objectif pour le suivre ici.</string>
  <string name="activity_finished">J’ai terminé cette activité</string>
  <string name="activity_progress">Activités terminées : %1$d sur %2$d</string>
+ <string name="lesson_start">Commencer la leçon</string>
+ <string name="lesson_step">Étape %1$d sur %2$d</string>
+ <string name="lesson_all_done">Toutes les étapes terminées</string>
 </resources>

@@ -76,4 +76,7 @@
  <string name="goals_hint">افتح قسمًا وحدد هدف تعلّم لتتابع إنجازه هنا.</string>
  <string name="activity_finished">أنجزت هذا النشاط</string>
  <string name="activity_progress">الأنشطة المنجزة: %1$d من %2$d</string>
+ <string name="lesson_start">ابدأ الدرس</string>
+ <string name="lesson_step">الخطوة %1$d من %2$d</string>
+ <string name="lesson_all_done">اكتملت خطوات الدرس</string>
 </resources>
