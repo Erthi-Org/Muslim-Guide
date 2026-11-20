@@ -152,3 +152,5 @@ jobs:
           gh pr create --draft --base "$base" --head "$branch" \
             --title 'Validate APK checker command-line arguments' \
             --body "Claude Bedrock pilot. Isolated tests passed: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+# Verify draft publication with the configured repository secret.
