@@ -4,20 +4,36 @@ import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import org.junit.Before
+import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
+import org.junit.runner.Description
 import org.junit.runner.RunWith
+import org.junit.runners.model.Statement
 
 /** Emulator evidence for the prayer learning path; not a TalkBack or physical-device study. */
 @RunWith(AndroidJUnit4::class)
 class LessonPathTest {
-    @get:Rule val rule = createAndroidComposeRule<MainActivity>()
 
-    @Before fun clearLearningState() {
-        InstrumentationRegistry.getInstrumentation().targetContext
-            .getSharedPreferences("guide-learning-v1", 0).edit().clear().commit()
+    // Clear SharedPreferences BEFORE the Activity (and its ViewModel) are created.
+    // createAndroidComposeRule launches the Activity during Rule setup, which runs
+    // before @Before. Without this, the ViewModel reads stale SharedPreferences from
+    // the previous test and caches completedActivities, causing allActivitiesDone=true
+    // and making lesson_all_done appear instead of the step counter.
+    @get:Rule(order = 0)
+    val clearPrefsRule: TestRule = TestRule { base, _ ->
+        object : Statement() {
+            override fun evaluate() {
+                InstrumentationRegistry.getInstrumentation().targetContext
+                    .getSharedPreferences("guide-learning-v1", 0).edit().clear().commit()
+                base.evaluate()
+            }
+        }
     }
+
+    @get:Rule(order = 1)
+    val rule = createAndroidComposeRule<MainActivity>()
 
     private fun scrollTo(text: String) {
         try {
@@ -52,7 +68,8 @@ class LessonPathTest {
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).assertIsDisplayed().performClick()
 
-        // Step 1 of 3: first prayer activity — wait until lesson mode activates
+        // Step 1 of 3: first prayer activity — waitForText confirms lessonStep = 0
+        // and allActivitiesDone = false (ViewModel starts clean via clearPrefsRule)
         val step1Text = rule.activity.getString(R.string.lesson_step, 1, 3)
         waitForText(step1Text)
         scrollTo(step1Text)
@@ -96,7 +113,12 @@ class LessonPathTest {
         scrollTo(prayerTitle)
         rule.onNodeWithText(prayerTitle).performClick()
 
-        // Complete both prayer activities from the full module detail view
+        // Complete both prayer activities from the full module detail view.
+        // waitForIdle() after the FIRST click (let recomposition settle so scroll
+        // correctly finds the second occurrence). No second waitForIdle() — adding
+        // one after the second click breaks the flow on API 35 (the extra recompose
+        // leaves the semantic tree in a state where lesson_start is not findable
+        // within the timeout; this matched v3 which passed on both API levels).
         val activityFinished = rule.activity.getString(R.string.activity_finished)
         waitForText(activityFinished)
         scrollTo(activityFinished)
@@ -104,12 +126,9 @@ class LessonPathTest {
         rule.waitForIdle()
         scrollTo(activityFinished)
         rule.onAllNodesWithText(activityFinished)[1].assertIsOff().performClick()
-        // Wait for the second toggle to commit before reading completion state
-        rule.waitForIdle()
 
         // Start lesson: both activities already done, banner appears immediately
         val startLesson = rule.activity.getString(R.string.lesson_start)
-        waitForText(startLesson)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).performClick()
         val allDone = rule.activity.getString(R.string.lesson_all_done)
