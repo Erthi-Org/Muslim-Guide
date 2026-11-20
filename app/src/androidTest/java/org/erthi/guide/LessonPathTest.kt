@@ -111,14 +111,20 @@ class LessonPathTest {
         rule.onNodeWithText(activityFinished).assertIsOff().performClick()
         rule.waitForIdle()
 
-        // Step 2 of 3 (lessonStep = 1): QuranReading — no activity to toggle.
+        // Advance step 1 → step 2.
+        scrollTo(next)
+        rule.onNodeWithText(next).performClick()
+
+        // Step 2 of 3 (lessonStep = 1): QuranReading — no checkbox. Advance step 2 → step 3.
+        val step2 = rule.activity.getString(R.string.lesson_step, 2, 3)
+        waitForText(step2)
         scrollTo(next)
         rule.onNodeWithText(next).performClick()
 
         // Step 3 of 3 (lessonStep = 2): only LearningActivityCard(lessons[1]) = prayer:1
         // is visible. Toggle it. After this toggle allActivitiesDone becomes true while
         // lessonStep is still >= 0, so the composition immediately replaces the step
-        // counter with the allDone banner — no second Start Lesson click required.
+        // counter with the allDone banner.
         val step3 = rule.activity.getString(R.string.lesson_step, 3, 3)
         waitForText(step3)
         scrollTo(activityFinished)
