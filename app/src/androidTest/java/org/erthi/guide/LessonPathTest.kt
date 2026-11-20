@@ -25,6 +25,12 @@ class LessonPathTest {
         } catch (_: Throwable) { /* already visible or scroll unavailable */ }
     }
 
+    private fun waitForText(text: String, timeoutMs: Long = 10000) {
+        rule.waitUntil(timeoutMs) {
+            rule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
     private fun waitReady() {
         rule.waitUntil(30000) {
             rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.settings))
@@ -42,12 +48,14 @@ class LessonPathTest {
         rule.onNodeWithText(prayerTitle).performClick()
 
         val startLesson = rule.activity.getString(R.string.lesson_start)
+        // Wait until detail renders the Start Lesson button, then scroll to it and click
+        waitForText(startLesson)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).assertIsDisplayed().performClick()
 
-        // Step 1 of 3: scroll to step counter (top of lesson block) then verify activity
-        rule.waitForIdle()
+        // Wait until lesson mode activates (step counter appears in composition tree)
         val step1Text = rule.activity.getString(R.string.lesson_step, 1, 3)
+        waitForText(step1Text)
         scrollTo(step1Text)
         rule.onNodeWithText(step1Text).assertIsDisplayed()
         val step1Title = if (arabic) "تهيّأ للصلاة" else "Prepare for prayer"
@@ -58,8 +66,8 @@ class LessonPathTest {
         val next = rule.activity.getString(R.string.next)
         scrollTo(next)
         rule.onNodeWithText(next).performClick()
-        rule.waitForIdle()
         val step2Text = rule.activity.getString(R.string.lesson_step, 2, 3)
+        waitForText(step2Text)
         scrollTo(step2Text)
         rule.onNodeWithText(step2Text).assertIsDisplayed()
         scrollTo("2:43")
@@ -69,8 +77,8 @@ class LessonPathTest {
         // Step 3 of 3: second prayer activity
         scrollTo(next)
         rule.onNodeWithText(next).performClick()
-        rule.waitForIdle()
         val step3Text = rule.activity.getString(R.string.lesson_step, 3, 3)
+        waitForText(step3Text)
         scrollTo(step3Text)
         rule.onNodeWithText(step3Text).assertIsDisplayed()
         val step2Title = if (arabic) "تدرّب وسأل" else "Practise and ask"
@@ -79,7 +87,7 @@ class LessonPathTest {
 
         // Module title button exits lesson mode; Start Lesson reappears
         rule.onNodeWithText(prayerTitle).performClick()
-        rule.waitForIdle()
+        waitForText(startLesson)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).assertIsDisplayed()
     }
@@ -94,6 +102,7 @@ class LessonPathTest {
 
         // Complete both prayer activities from the full module detail view
         val activityFinished = rule.activity.getString(R.string.activity_finished)
+        waitForText(activityFinished)
         scrollTo(activityFinished)
         rule.onAllNodesWithText(activityFinished)[0].assertIsOff().performClick()
         rule.waitForIdle()
@@ -102,10 +111,11 @@ class LessonPathTest {
 
         // Start lesson: both activities already done, banner appears immediately
         val startLesson = rule.activity.getString(R.string.lesson_start)
+        waitForText(startLesson)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).performClick()
-        rule.waitForIdle()
         val allDone = rule.activity.getString(R.string.lesson_all_done)
+        waitForText(allDone)
         scrollTo(allDone)
         rule.onNodeWithText(allDone).assertExists()
     }
