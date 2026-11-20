@@ -15,6 +15,12 @@ class GuideNavigationTest {
         rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(label))
     }
 
+    private fun waitForText(text: String, timeoutMs: Long = 20000) {
+        rule.waitUntil(timeoutMs) {
+            rule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
+        }
+    }
+
     @Test fun searchDoesNotHideFavoritesAfterReturningFromDetail() {
         rule.onNodeWithText(rule.activity.getString(R.string.app_name)).assertIsDisplayed()
         runCatching {
@@ -47,7 +53,12 @@ class GuideNavigationTest {
         rule.waitUntil(30000) {
             rule.activity.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
         }
+        // Wait for Compose to finish re-rendering the recreated Activity after rotation.
+        // On API 26 the layout pass after Activity recreation can lag behind the
+        // orientation-change configuration update, so assertIsDisplayed would fail on
+        // an empty tree without this guard.
         val remove = rule.activity.getString(R.string.remove_favorite)
+        waitForText(remove, 20000)
         scrollTo(remove)
         rule.onNodeWithText(remove).assertIsDisplayed()
         val back = rule.activity.getString(R.string.back)
