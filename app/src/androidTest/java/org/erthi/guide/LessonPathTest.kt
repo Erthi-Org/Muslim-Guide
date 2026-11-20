@@ -21,8 +21,8 @@ class LessonPathTest {
 
     private fun scrollTo(text: String) {
         try {
-            rule.onNodeWithText(text).performScrollTo()
-        } catch (_: AssertionError) { /* already visible or not in a scrollable container */ }
+            rule.onNode(hasScrollToIndexAction()).performScrollToNode(hasText(text))
+        } catch (_: Throwable) { /* already visible or scroll unavailable */ }
     }
 
     private fun waitReady() {
@@ -43,13 +43,15 @@ class LessonPathTest {
 
         val startLesson = rule.activity.getString(R.string.lesson_start)
         scrollTo(startLesson)
-        rule.onNodeWithText(startLesson).assertExists().performClick()
+        rule.onNodeWithText(startLesson).assertIsDisplayed().performClick()
 
-        // Step 1 of 3: first prayer activity
+        // Step 1 of 3: scroll to step counter (top of lesson block) then verify activity
         rule.waitForIdle()
+        val step1Text = rule.activity.getString(R.string.lesson_step, 1, 3)
+        scrollTo(step1Text)
+        rule.onNodeWithText(step1Text).assertIsDisplayed()
         val step1Title = if (arabic) "تهيّأ للصلاة" else "Prepare for prayer"
         scrollTo(step1Title)
-        rule.onNodeWithText(rule.activity.getString(R.string.lesson_step, 1, 3)).assertExists()
         rule.onNodeWithText(step1Title).assertExists()
 
         // Step 2 of 3: Quranic reading with source attribution
@@ -57,7 +59,9 @@ class LessonPathTest {
         scrollTo(next)
         rule.onNodeWithText(next).performClick()
         rule.waitForIdle()
-        rule.onNodeWithText(rule.activity.getString(R.string.lesson_step, 2, 3)).assertExists()
+        val step2Text = rule.activity.getString(R.string.lesson_step, 2, 3)
+        scrollTo(step2Text)
+        rule.onNodeWithText(step2Text).assertIsDisplayed()
         scrollTo("2:43")
         rule.onNodeWithText("2:43").assertExists()
         rule.onNodeWithText("Tanzil Project · https://tanzil.net").assertExists()
@@ -66,7 +70,9 @@ class LessonPathTest {
         scrollTo(next)
         rule.onNodeWithText(next).performClick()
         rule.waitForIdle()
-        rule.onNodeWithText(rule.activity.getString(R.string.lesson_step, 3, 3)).assertExists()
+        val step3Text = rule.activity.getString(R.string.lesson_step, 3, 3)
+        scrollTo(step3Text)
+        rule.onNodeWithText(step3Text).assertIsDisplayed()
         val step2Title = if (arabic) "تدرّب وسأل" else "Practise and ask"
         scrollTo(step2Title)
         rule.onNodeWithText(step2Title).assertExists()
@@ -99,6 +105,8 @@ class LessonPathTest {
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).performClick()
         rule.waitForIdle()
-        rule.onNodeWithText(rule.activity.getString(R.string.lesson_all_done)).assertExists()
+        val allDone = rule.activity.getString(R.string.lesson_all_done)
+        scrollTo(allDone)
+        rule.onNodeWithText(allDone).assertExists()
     }
 }
