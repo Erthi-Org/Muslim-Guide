@@ -113,12 +113,10 @@ class LessonPathTest {
         scrollTo(prayerTitle)
         rule.onNodeWithText(prayerTitle).performClick()
 
-        // Complete both prayer activities from the full module detail view.
-        // waitForIdle() after the FIRST click (let recomposition settle so scroll
-        // correctly finds the second occurrence). No second waitForIdle() — adding
-        // one after the second click breaks the flow on API 35 (the extra recompose
-        // leaves the semantic tree in a state where lesson_start is not findable
-        // within the timeout; this matched v3 which passed on both API levels).
+        // waitForText confirms the detail view rendered before interacting with toggles.
+        // waitForIdle() after the first click lets recomposition settle so scrollTo
+        // correctly locates the second occurrence. No waitForIdle() after the second
+        // click — the composition state is committed synchronously on the main thread.
         val activityFinished = rule.activity.getString(R.string.activity_finished)
         waitForText(activityFinished)
         scrollTo(activityFinished)
@@ -127,10 +125,17 @@ class LessonPathTest {
         scrollTo(activityFinished)
         rule.onAllNodesWithText(activityFinished)[1].assertIsOff().performClick()
 
-        // Start lesson: both activities already done, banner appears immediately
+        // waitForIdle() after clicking Start Lesson flushes any pending Dispatchers.Main
+        // coroutines (completedActivities StateFlow update from the second toggle) so that
+        // the composition for lessonStep=0 reads allActivitiesDone=true. Without this
+        // flush, the ViewModel update for the second toggle may not have committed yet
+        // when the composition settles, leaving allActivitiesDone=false and showing the
+        // step counter instead of lesson_all_done. v3 (which passed on both API levels)
+        // had exactly this waitForIdle() after clicking Start Lesson.
         val startLesson = rule.activity.getString(R.string.lesson_start)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).performClick()
+        rule.waitForIdle()
         val allDone = rule.activity.getString(R.string.lesson_all_done)
         waitForText(allDone)
         rule.onNodeWithText(allDone).assertExists()
