@@ -76,4 +76,7 @@
  <string name="goals_hint">Bir bölüm açıp burada izlemek için öğrenme hedefi belirleyin.</string>
  <string name="activity_finished">Bu etkinliği tamamladım</string>
  <string name="activity_progress">Tamamlanan etkinlikler: %2$d etkinlikten %1$d</string>
+ <string name="lesson_start">Dersi başlat</string>
+ <string name="lesson_step">%2$d adımdan %1$d</string>
+ <string name="lesson_all_done">Tüm ders adımları tamamlandı</string>
 </resources>

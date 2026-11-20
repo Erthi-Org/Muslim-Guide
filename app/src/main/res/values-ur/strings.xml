@@ -76,4 +76,7 @@
  <string name="goals_hint">کسی حصے میں سیکھنے کا ہدف مقرر کریں تاکہ یہاں پیش رفت دیکھ سکیں۔</string>
  <string name="activity_finished">میں نے یہ سرگرمی مکمل کی</string>
  <string name="activity_progress">مکمل سرگرمیاں: %2$d میں سے %1$d</string>
+ <string name="lesson_start">سبق شروع کریں</string>
+ <string name="lesson_step">مرحلہ %1$d از %2$d</string>
+ <string name="lesson_all_done">سبق کے تمام مراحل مکمل ہو گئے</string>
 </resources>

@@ -76,4 +76,7 @@
  <string name="goals_hint">Buka bagian dan tetapkan tujuan belajar untuk melacaknya di sini.</string>
  <string name="activity_finished">Saya telah menyelesaikan aktivitas ini</string>
  <string name="activity_progress">Aktivitas selesai: %1$d dari %2$d</string>
+ <string name="lesson_start">Mulai Pelajaran</string>
+ <string name="lesson_step">Langkah %1$d dari %2$d</string>
+ <string name="lesson_all_done">Semua langkah pelajaran selesai</string>
 </resources>
