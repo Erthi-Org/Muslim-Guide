@@ -94,25 +94,37 @@ class LessonPathTest {
         scrollTo(prayerTitle)
         rule.onNodeWithText(prayerTitle).performClick()
 
-        val activityFinished = rule.activity.getString(R.string.activity_finished)
-        scrollTo(activityFinished)
-        rule.onAllNodesWithText(activityFinished)[0].assertIsOff().performClick()
-        rule.waitForIdle()
-        // Diagnostic: first toggle must be ON before proceeding
-        rule.onAllNodesWithText(activityFinished)[0].assertIsOn()
-        scrollTo(activityFinished)
-        rule.onAllNodesWithText(activityFinished)[1].assertIsOff().performClick()
-        rule.waitForIdle()
-        // Diagnostic: second toggle must be ON before proceeding
-        rule.onAllNodesWithText(activityFinished)[1].assertIsOn()
-
+        // Enter lesson mode (lessonStep = 0). With cleared prefs both activities
+        // are undone, so allActivitiesDone = false and step 1 is shown.
         val startLesson = rule.activity.getString(R.string.lesson_start)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).performClick()
+
+        val activityFinished = rule.activity.getString(R.string.activity_finished)
+        val next = rule.activity.getString(R.string.next)
+
+        // Step 1 of 3 (lessonStep = 0): only LearningActivityCard(lessons[0]) = prayer:0
+        // is visible — exactly one activityFinished node. Toggle it via singular selector.
+        val step1 = rule.activity.getString(R.string.lesson_step, 1, 3)
+        waitForText(step1)
+        scrollTo(activityFinished)
+        rule.onNodeWithText(activityFinished).assertIsOff().performClick()
         rule.waitForIdle()
-        // Diagnostic: dump full semantic tree to logcat so CI artifact reveals the composition
-        // state (overview vs lesson mode, allActivitiesDone true/false) on API 35.
-        rule.onRoot().printToLog("GuideTest_tree")
+
+        // Step 2 of 3 (lessonStep = 1): QuranReading — no activity to toggle.
+        scrollTo(next)
+        rule.onNodeWithText(next).performClick()
+
+        // Step 3 of 3 (lessonStep = 2): only LearningActivityCard(lessons[1]) = prayer:1
+        // is visible. Toggle it. After this toggle allActivitiesDone becomes true while
+        // lessonStep is still >= 0, so the composition immediately replaces the step
+        // counter with the allDone banner — no second Start Lesson click required.
+        val step3 = rule.activity.getString(R.string.lesson_step, 3, 3)
+        waitForText(step3)
+        scrollTo(activityFinished)
+        rule.onNodeWithText(activityFinished).assertIsOff().performClick()
+        rule.waitForIdle()
+
         val allDone = rule.activity.getString(R.string.lesson_all_done)
         scrollTo(allDone)
         rule.onNodeWithText(allDone).assertExists()
