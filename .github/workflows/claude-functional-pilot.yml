@@ -1,0 +1,137 @@
+name: Erthi Claude functional pilot
+on:
+  push:
+    branches: [integration/claude-bedrock-cloud-20261119]
+    paths: ['.github/workflows/claude-functional-pilot.yml']
+permissions: {}
+concurrency:
+  group: erthi-claude-functional-pilot
+  cancel-in-progress: false
+jobs:
+  generate:
+    if: >-
+      github.repository == 'Erthi-Org/Muslim-Guide' && github.actor == 'Erthuna' && github.run_attempt == 1 && github.event.head_commit.message == 'ci: verify Erthi Claude functional pilot'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      source: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: work/android-foundation
+          persist-credentials: false
+      - id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - run: npm install --prefix "$RUNNER_TEMP/claude-cli" @anthropic-ai/claude-code@2.1.328 --no-audit --no-fund
+      - uses: aws-actions/configure-aws-credentials@ff717079ee2060e4bcee96c4779b553acc87447c
+        with:
+          role-to-assume: ${{ vars.NEXVARY_BEDROCK_ROLE_ARN }}
+          aws-region: eu-central-1
+          role-duration-seconds: 900
+          retry-max-attempts: 2
+      - name: Generate functional patch
+        shell: bash
+        env:
+          CLAUDE_CODE_USE_BEDROCK: '1'
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1'
+          DISABLE_AUTOUPDATER: '1'
+        run: |
+          aws sts get-caller-identity --query Arn --output text | grep -F ':assumed-role/erthi-github-bedrock-development/'
+          "$RUNNER_TEMP/claude-cli/node_modules/.bin/claude" -p \
+            'Improve tools/check_apk.py so missing or extra command-line arguments print usage to stderr and exit 2 before opening files. Preserve all APK checks. Add tools/test_check_apk_cli.py with standard-library unittest and a valid minimal APK fixture. Edit only those files.' \
+            --model eu.anthropic.claude-sonnet-4-6 --max-turns 12 \
+            --tools Read,Glob,Grep,Edit,Write --allowedTools Read,Glob,Grep,Edit,Write \
+            --no-session-persistence --output-format json > "$RUNNER_TEMP/claude.json"
+          jq -e '.is_error == false' "$RUNNER_TEMP/claude.json" >/dev/null
+          jq '{usage,num_turns,total_cost_usd}' "$RUNNER_TEMP/claude.json"
+          git add -- tools/check_apk.py tools/test_check_apk_cli.py
+          test "$(git diff --cached --name-only)" = "$(printf '%s\n' tools/check_apk.py tools/test_check_apk_cli.py)"
+          test ! -L tools/check_apk.py && test ! -L tools/test_check_apk_cli.py
+          git diff --cached --check
+          git diff --cached --binary > "$RUNNER_TEMP/development.patch"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: development-patch
+          path: ${{ runner.temp }}/development.patch
+  test:
+    needs: generate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.generate.outputs.source }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: development-patch
+          path: ${{ runner.temp }}
+      - name: Run isolated regression tests
+        shell: bash
+        run: |
+          git apply --index --include=tools/check_apk.py --include=tools/test_check_apk_cli.py "$RUNNER_TEMP/development.patch"
+          test ! -L tools/check_apk.py && test ! -L tools/test_check_apk_cli.py
+          export AWS_ISOLATION_PROBE=host-only GH_TOKEN=host-only ACTIONS_ID_TOKEN_ISOLATION_PROBE=host-only
+          isolated() {
+            docker run --rm -i --network none --read-only --cap-drop ALL \
+              --security-opt no-new-privileges --user 65534:65534 \
+              --tmpfs /tmp:rw,nosuid,nodev,size=64m --env HOME=/tmp \
+              --mount "type=bind,source=$GITHUB_WORKSPACE/tools,target=/tools,readonly" \
+              --workdir /tools python:3.12-slim python -B "$@"
+          }
+          isolated -I - <<'PY'
+          import os, subprocess, sys
+          from pathlib import Path
+          assert not any(key.startswith(("AWS_", "ACTIONS_ID_TOKEN_")) for key in os.environ)
+          assert not {"GH_TOKEN", "GITHUB_TOKEN"} & os.environ.keys()
+          assert not Path("/var/run/docker.sock").exists()
+          assert set(os.listdir("/sys/class/net")) == {"lo"}
+          assert os.statvfs("/tools").f_flag & os.ST_RDONLY
+          for args in ([], ["a"], ["a", "b", "c"]):
+              result = subprocess.run([sys.executable, "check_apk.py", *args], capture_output=True, text=True)
+              assert result.returncode == 2 and "usage" in result.stderr.lower(), result
+          print("Isolation and independent CLI assertions passed")
+          PY
+          test -f tools/test_check_apk_cli.py
+          isolated -m unittest discover -p test_check_apk_cli.py -v 2>&1 | sed 's/^/[test] /'
+  publish:
+    needs: [generate, test]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.generate.outputs.source }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: development-patch
+          path: ${{ runner.temp }}
+      - name: Publish tested patch as a draft
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          base=work/android-foundation
+          test "$(git ls-remote --exit-code origin "refs/heads/$base" | cut -f1)" = "$(git rev-parse HEAD)"
+          git apply --index --include=tools/check_apk.py --include=tools/test_check_apk_cli.py "$RUNNER_TEMP/development.patch"
+          test "$(git diff --cached --name-only)" = "$(printf '%s\n' tools/check_apk.py tools/test_check_apk_cli.py)"
+          test ! -L tools/check_apk.py && test ! -L tools/test_check_apk_cli.py
+          git diff --cached --check
+          git -c core.hooksPath=/dev/null -c user.name='github-actions[bot]' \
+            -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m 'Validate APK checker command-line arguments'
+          branch="claude/erthi-$GITHUB_RUN_ID"
+          gh auth setup-git
+          git push origin "HEAD:refs/heads/$branch"
+          gh pr create --draft --base "$base" --head "$branch" \
+            --title 'Validate APK checker command-line arguments' \
+            --body "Claude Bedrock pilot. Isolated tests passed: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
