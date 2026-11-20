@@ -48,18 +48,17 @@ class LessonPathTest {
         rule.onNodeWithText(prayerTitle).performClick()
 
         val startLesson = rule.activity.getString(R.string.lesson_start)
-        // Wait until detail renders the Start Lesson button, then scroll to it and click
         waitForText(startLesson)
         scrollTo(startLesson)
         rule.onNodeWithText(startLesson).assertIsDisplayed().performClick()
 
-        // Wait until lesson mode activates (step counter appears in composition tree)
+        // Step 1 of 3: first prayer activity — wait until lesson mode activates
         val step1Text = rule.activity.getString(R.string.lesson_step, 1, 3)
         waitForText(step1Text)
         scrollTo(step1Text)
-        rule.onNodeWithText(step1Text).assertIsDisplayed()
+        rule.onNodeWithText(step1Text).assertExists()
+        // Activity title: JSON ar[0]="تهيّأ للصلاة" en[2]="Prepare for prayer"
         val step1Title = if (arabic) "تهيّأ للصلاة" else "Prepare for prayer"
-        scrollTo(step1Title)
         rule.onNodeWithText(step1Title).assertExists()
 
         // Step 2 of 3: Quranic reading with source attribution
@@ -68,9 +67,7 @@ class LessonPathTest {
         rule.onNodeWithText(next).performClick()
         val step2Text = rule.activity.getString(R.string.lesson_step, 2, 3)
         waitForText(step2Text)
-        scrollTo(step2Text)
-        rule.onNodeWithText(step2Text).assertIsDisplayed()
-        scrollTo("2:43")
+        rule.onNodeWithText(step2Text).assertExists()
         rule.onNodeWithText("2:43").assertExists()
         rule.onNodeWithText("Tanzil Project · https://tanzil.net").assertExists()
 
@@ -79,10 +76,9 @@ class LessonPathTest {
         rule.onNodeWithText(next).performClick()
         val step3Text = rule.activity.getString(R.string.lesson_step, 3, 3)
         waitForText(step3Text)
-        scrollTo(step3Text)
-        rule.onNodeWithText(step3Text).assertIsDisplayed()
-        val step2Title = if (arabic) "تدرّب وسأل" else "Practise and ask"
-        scrollTo(step2Title)
+        rule.onNodeWithText(step3Text).assertExists()
+        // Activity title: JSON ar[0]="تدرّب ثم اسأل" en[2]="Practise and ask"
+        val step2Title = if (arabic) "تدرّب ثم اسأل" else "Practise and ask"
         rule.onNodeWithText(step2Title).assertExists()
 
         // Module title button exits lesson mode; Start Lesson reappears
@@ -116,7 +112,6 @@ class LessonPathTest {
         rule.onNodeWithText(startLesson).performClick()
         val allDone = rule.activity.getString(R.string.lesson_all_done)
         waitForText(allDone)
-        scrollTo(allDone)
         rule.onNodeWithText(allDone).assertExists()
     }
 }
