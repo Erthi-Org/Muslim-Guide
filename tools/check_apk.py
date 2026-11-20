@@ -5,6 +5,10 @@ import sys
 import zipfile
 from pathlib import Path
 
+if len(sys.argv) != 3:
+    print(f"usage: {sys.argv[0]} <apk> <aapt-permissions-output>", file=sys.stderr)
+    sys.exit(2)
+
 apk = Path(sys.argv[1])
 permissions = Path(sys.argv[2]).read_text()
 package = "org.erthi.guide"
